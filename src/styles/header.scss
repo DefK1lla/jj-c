@@ -1,0 +1,22 @@
+@use 'constants.scss' as *;
+
+
+.container {
+    background-color: $light-blue;
+    width: 50%;
+    height: 100%;
+    color: $white;
+    padding-top: 31px;
+    padding-left: 55px;
+    padding-bottom: 51px
+};
+
+.title {
+    font-size: 64px;
+    font-family: MontserratBold;
+}
+
+.description {
+    font-size: 36px;
+    font-family: MontserratRegular;
+}
