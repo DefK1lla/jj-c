@@ -1,8 +1,7 @@
-
 import "../../styles/header.scss";
 
 const Header = () => {
-
+//TODO add button display depending on the router
     return (
         <div className="container">
             <div className="title">
