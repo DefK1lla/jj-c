@@ -1,19 +1,21 @@
+import { Button } from "./components/Button/Button";
+import { Input } from "./components/Input/Input";
+
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Input label="id" name="id" id="text" />
+      <Input label="number" id="number" name="number" type="number" />
+      <Button action="increase">
+        +
+      </Button>
+      <Button action="decrease">
+        -
+      </Button>
+
+      <Button>
+        See
+      </Button>
     </div>
   );
 }
