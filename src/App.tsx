@@ -8,12 +8,10 @@ export const App: FC = () => {
     <BrowserRouter>
       <Routes>
         <Route index element={<HomePage />} />
-        <Route>
-          {routes.map(({ path, Component }) => {
-            return <Route key={path} path={path} element={Component} />;
-          })
-          }
-        </Route>
+        {routes.map(({ path, Component }) => {
+          return <Route key={path} path={path} element={Component} />;
+        })
+        }
       </Routes>
     </BrowserRouter>
   );

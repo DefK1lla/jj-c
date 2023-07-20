@@ -6,7 +6,7 @@ import {
   FilePage,
   TranslatePage
 } from "./pages";
-import { path } from "./utils/constants";
+import { path } from "./constants/paths";
 
 export const routes = [
   {
