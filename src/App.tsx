@@ -1,19 +1,11 @@
 import { FC } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { routes } from "./routes";
-import { HomePage } from "./pages";
+import { ExamplePage } from "./pages/ExamplePage/ExamplePage";
 
-export const App: FC = () => {
+const App: FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route index element={<HomePage />} />
-        {routes.map(({ path, Component }) => {
-          return <Route key={path} path={path} element={Component} />;
-        })
-        }
-      </Routes>
-    </BrowserRouter>
+    <>
+      <ExamplePage />
+    </>
   );
 }
 
