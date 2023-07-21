@@ -6,7 +6,7 @@ import {
   FilePage,
   TranslatePage
 } from "./pages";
-import { path } from "./constants/paths";
+import { path } from "./shared/constants/paths";
 
 export const routes = [
   {

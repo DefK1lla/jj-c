@@ -1,7 +1,8 @@
-import React from 'react'
+import { FC } from 'react'
+import { ExamplePage } from '../ExamplePage/ExamplePage'
 
 export const HomePage = () => {
   return (
-    <div>HomePage</div>
+    <ExamplePage />
   )
 }
