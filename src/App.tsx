@@ -1,21 +1,20 @@
-import { Button, Input } from "./components";
+import { FC } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HomePage } from "./pages";
+import { routes } from "./routes";
 
-function App() {
+const App: FC = () => {
   return (
-    <div className="App">
-      <Input label="id" name="id" id="text" />
-      <Input label="number" id="number" name="number" type="number" />
-      <Button action="increase">
-        +
-      </Button>
-      <Button action="decrease">
-        -
-      </Button>
-
-      <Button>
-        See
-      </Button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<HomePage />} />
+        {
+          routes.map(({ path, Component }) => {
+            return <Route key={path} path={path} element={Component} />;
+          })
+        }
+      </Routes>
+    </BrowserRouter>
   );
 }
 
