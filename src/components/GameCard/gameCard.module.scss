@@ -1,0 +1,22 @@
+.card {
+  max-width: 356px;
+  padding: 3px;
+  background: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+
+  img {
+    border-radius: 10px 10px 0 0;
+  }
+}
+.title {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 20px;
+  align-self: flex-start;
+  padding: 5px 0;
+  margin-left: 15px;
+}

@@ -1,5 +1,4 @@
-import React from 'react'
-import { Button, Input } from '../../components'
+import { Button, GameCard, Input } from '../../components'
 
 export const ExamplePage = () => {
   return (
@@ -16,6 +15,7 @@ export const ExamplePage = () => {
       <Button>
         See
       </Button>
+      <GameCard img={"image/photo.jpg"} title='KRE. KO'/>
     </>
   )
 }
