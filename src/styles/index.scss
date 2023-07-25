@@ -1,15 +1,50 @@
 @use './constants.scss';
+@import '../styles/vendor/fonts/fonts.scss';
+
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 39px;
+  background-color: #3241ce;
+  background-color: #1f2881;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+input {
+  border: none;
+  outline: none;
+  font-size: 32px;
+  font-weight: 400;
+  margin-bottom: 11px;
+  font-family: Montserrat;
+}
+label {
+  color: #ffffff;
+  margin-right: 12px;
+}
+button {
+  border: none;
+  outline: none;
+  font-weight: 700;
+  font-family: Montserrat;
+  color: #ffffff;
+  font-size: 32px;
+  border-radius: 10px;
+  background-color: #3241ce;
+  display: inline-block;
+  padding: 6px 10px;
+  text-transform: uppercase;
+  min-width: 119px;
+  cursor: pointer;
 }
