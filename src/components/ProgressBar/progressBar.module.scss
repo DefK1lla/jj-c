@@ -1,0 +1,19 @@
+@use 'styles' as *;
+$percent: 0;
+
+.progress {
+    display: flex;
+    width: #{$percent};
+    background-color: red;
+    border-radius: 10px;
+}
+
+.container {
+    display: flex;
+    font-family: $font-Montserrat;
+    font-size: 32px;
+    width: 839px;
+    border-radius: 10px;
+    background-color: white;
+    font-weight: 700;
+}
