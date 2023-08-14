@@ -1,5 +1,5 @@
 .card {
-  max-width: 356px;
+  min-width: 356px;
   padding: 3px;
   background: #ffffff;
   border-radius: 10px;
@@ -10,8 +10,8 @@
 
   img {
     border-radius: 10px 10px 0 0;
-    width: 345px;
-    height: 145px;
+    min-width: 345px;
+    min-height: 145px;
     object-fit: cover;
   }
 }

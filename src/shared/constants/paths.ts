@@ -3,7 +3,7 @@ export enum path {
   REGISTRATION_ROUTE = "/registration",
   HOME_ROUTE = "/home",
   GAME_ROUTE = "/game/:gameId",
-  FILE_ROUTE = "/file/:fileId",
+  FILE_ROUTE = "/file",
   FOLDER_ROUTE = "/folder/:folderId",
   TRANSLATE_ROUTE = "/translate/:fileId",
   NOT_FOUND = "*",

@@ -1,3 +1,5 @@
+@use 'styles' as *;
+
 .menu {
     display: flex;
     flex-direction: column;
@@ -6,6 +8,30 @@
     padding-right: 55px;
     width: calc(100vw - 950px);
     min-width: 360px;
+    max-width: 900px;
+}
+
+.progress_bar_container {
+    display: grid;
+    row-gap: 25px;
+}
+
+.progress_bar_title {
+    color: $color-white;
+    font-size: 40px;
+    font-weight: 700;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    word-spacing: nowrap;
+}
+
+.recent_json_title {
+    color: $color-white;
+    font-size: 40px;
+    font-weight: 700;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    word-spacing: nowrap;
 }
 
 .button {

@@ -4,7 +4,6 @@ $percent: 0;
 .progress {
     display: flex;
     width: #{$percent};
-    background-color: red;
     border-radius: 10px;
 }
 
@@ -12,8 +11,18 @@ $percent: 0;
     display: flex;
     font-family: $font-Montserrat;
     font-size: 32px;
-    width: 839px;
+    max-width: 839px;
     border-radius: 10px;
     background-color: white;
     font-weight: 700;
+}
+
+.name {
+    min-width: 200px;
+    word-spacing: nowrap;
+}
+
+.percent {
+    min-width: 50px;
+    left: 50px;
 }
