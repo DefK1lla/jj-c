@@ -1,0 +1,14 @@
+.menu {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding-left: 55px;
+    padding-right: 55px;
+    width: calc(100vw - 950px);
+    min-width: 360px;
+}
+
+.button {
+    margin-top: 61px;
+    margin-bottom: 25px;
+}

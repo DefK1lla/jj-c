@@ -1,0 +1,35 @@
+@use 'styles' as *;
+
+.mainContainer {
+    @media screen and (min-width: 768px) {
+        display: flex;
+    }
+    @media screen and (max-width: 767px) {
+        display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    }
+}
+
+.container {
+    background-color: $color-light-blue;
+    display: grid;
+    width: 950px;
+    
+    grid-auto-rows: 180px;
+    column-gap: 75px;
+    row-gap: 35px;
+    padding-left: 55px;
+    justify-content: center;
+    @media screen and (min-width: 1244px) {
+        min-height: calc(100vh - 160px); 
+        grid-template-columns: 355px 355px; 
+    }
+
+    @media screen and (max-width: 768px) {
+        padding-top: 25px;
+        padding-left: none;
+        grid-template-columns: 355px;
+    }
+
+}

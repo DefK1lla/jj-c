@@ -20,7 +20,7 @@ const App: FC = () => {
           })}
         </Routes>
       </BrowserRouter>
-      <ProgressBar percent={50} name='test'/>
+      {/* <ProgressBar percent={50} name='test'/> */}
     </div>
   )
 }

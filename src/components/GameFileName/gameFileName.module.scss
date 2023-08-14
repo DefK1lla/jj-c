@@ -1,0 +1,16 @@
+@use 'styles' as *;
+
+.container {
+    display: grid;
+    row-gap: 24px;
+}
+.name {
+    font-size: 32px;
+    background-color: $color-white;
+    border-radius: 10px;
+    height: 49px;
+    display: inline-table;
+    align-items: center;
+    font-weight: 700;
+    padding-left: 10px;
+}

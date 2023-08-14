@@ -1,0 +1,27 @@
+@use 'styles' as *;
+
+.container {
+    display: flex;
+    width: 100%;
+    padding-top: 45px;
+    align-items: center;
+    gap: 22px;
+}
+
+.userAvatar {
+    height: 97px;
+    width: 97px;
+    border-radius: 50%;
+    background-color: $color-white;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 64px;
+    font-weight: 600;
+}
+
+.userName {
+    font-size: 40px;
+    color: $color-white;
+}
