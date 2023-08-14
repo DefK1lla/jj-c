@@ -1,4 +1,4 @@
-import s from './header.module.scss'
+import s from './Header.module.scss'
 
 const Header = () => {
   //TODO add button display depending on the router
