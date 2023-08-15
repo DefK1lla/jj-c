@@ -1,7 +1,7 @@
 import { FC } from 'react'
 
 import { ExamplePage } from '../ExamplePage/ExamplePage';
-import { mockFilesGames, mockFilesUsers } from '../../shared/mockfile/mock';
+import { mockFilesGames, mockFilesUsers } from '../../shared/mockfolder/mock';
 import { GameCard } from '../../components';
 import s from "./homePage.module.scss";
 import { Menu } from '../../components/Menu/Menu';

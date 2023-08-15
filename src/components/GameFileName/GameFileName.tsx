@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import s from "./gameFileName.module.scss";
-import { mockFilesGames } from "../../shared/mockfile/mock";
+import { mockFilesGames } from "../../shared/mockfolder/mock";
 
 export const GameFileName: FC = () => {
     const items = ():string[] => {

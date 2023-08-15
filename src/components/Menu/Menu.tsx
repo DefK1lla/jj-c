@@ -1,11 +1,11 @@
 import { FC } from "react";
 
 import { Avatar } from "../Avatar/Avatar";
-import { mockFilesUsers } from "../../shared/mockfile/mock";
+import { mockFilesUsers } from "../../shared/mockfolder/mock";
 import { GameFileName } from "../GameFileName/GameFileName";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
-import { percents } from "../../shared/mockfile/mock_percents";
+import { percents } from "../../shared/mockfolder/mock_percents";
 
 import s from "./menu.module.scss";
 

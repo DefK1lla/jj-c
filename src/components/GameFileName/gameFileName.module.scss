@@ -3,6 +3,8 @@
 .container {
     display: grid;
     row-gap: 24px;
+    max-height: 350px;
+    overflow: scroll;
 }
 .name {
     font-size: 32px;
