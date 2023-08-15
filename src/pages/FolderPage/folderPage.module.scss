@@ -2,7 +2,7 @@
 
 .main_container{
     display: flex;
-    @media screen and (max-width: 1444px) {
+    @media screen and (max-width: 1244px) {
     flex-direction: column-reverse;
     align-items: center;
     }
@@ -10,49 +10,87 @@
 
 .container {
     background-color: $color-light-blue;
-    min-width: 950px;
-    @media screen and (min-width: 1244px) {
+   
+
+
+    @media screen and (min-width: 1444px) {
         min-height: calc(100vh - 160px); 
         min-width: calc(100vw - 600px);
+       
     }
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 1444px) {
         padding-top: 25px;
         padding-left: none;
+        width: 100%;
     }
 
 }
 .main_card {
-    padding-left: 55px;
+    
     display: grid;
     grid-auto-rows: 400px;
     grid-auto-columns: 840px;
     justify-content: center;
+    
+    @media screen and (min-width: 2880px) {
+        grid-auto-columns: 1680px;
+        grid-auto-rows: 800px;
+    }
+
+    @media screen and (max-width: 2880px) {
+        grid-auto-columns: 1260px;
+        grid-auto-rows: 600px;
+    }
+
+    @media screen and (max-width: 1921px) {
+        grid-auto-rows: 400px;
+        grid-auto-columns: 840px;
+    }
+
     @media screen and (max-width: 1540px) {
         grid-auto-columns: 640px;
     }
+
     @media screen and (max-width: 1240px) {
         grid-auto-columns: 440px;
         grid-auto-rows: 300px;
     }
+
+    @media screen and (max-width: 640px){
+        grid-template-columns: 355px;
+        grid-auto-rows: 180px; 
+    }
+
 }
 
 .child_cards {
     padding-top: 35px;
     display: grid;
-    grid-auto-rows: 180px;
+    
     column-gap: 75px;
     row-gap: 35px;
     padding-left: 0;
     justify-content: center;
 
-    @media screen and (min-width: 1445px) {
+    @media screen and (min-width: 2880px) {
+        grid-template-columns: 710px 710px 710px;
+        grid-auto-rows: 360px
+    }
+
+    @media screen and (max-width: 2880px) {
+        grid-template-columns: 535px 535px 535px; 
+        grid-auto-rows: 270px
+    }
+
+    @media screen and (max-width: 2480px) {
         min-height: calc(100vh - 160px); 
-        grid-template-columns: 355px 355px; 
+        grid-template-columns: 355px 355px;
+        grid-auto-rows: 180px; 
     }
 
     @media screen and (max-width: 1444px) {
-
+        grid-auto-rows: 180px;
         grid-template-columns: 355px;
     }
 }
