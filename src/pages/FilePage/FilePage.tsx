@@ -11,7 +11,7 @@ export const FilePage = () => {
     <div className={s.main_container}>
       <div className={s.container}>
         <div className={s.main_card}>
-            <GameCard  title={file.name} img={file.url} style={{ fontSize: "32px", lineHeight: "32px" }}/>
+            <GameCard  title={file.name} img={file.url} isBig={true}/>
         </div>
         <div className={s.files}>
           {

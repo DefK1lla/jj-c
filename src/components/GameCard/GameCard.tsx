@@ -4,14 +4,14 @@ import s from "./gameCard.module.scss";
 interface GameCardProps {
   img: string;
   title: string;
-  style?: any
+  isBig?: boolean
 }
 
-export const GameCard: FC<GameCardProps> = ({ img, title, style }) => {
+export const GameCard: FC<GameCardProps> = ({ img, title, isBig }) => {
   return (
     <div className={s.card}>
       <img src={img} alt={title} />
-      <span className={s.title} style={style}>{title}</span>
+      <span className={isBig ? s.big_title : s.title}>{title}</span>
     </div>
   );
 };

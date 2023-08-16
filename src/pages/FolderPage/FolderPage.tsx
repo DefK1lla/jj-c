@@ -11,7 +11,7 @@ export const FolderPage = () => {
     <div className={s.main_container}>
       <div className={s.container}>
         <div className={s.main_card}>
-            <GameCard  title={folder.name} img={folder.url} style={{ fontSize: "32px", lineHeight: "32px" }} />
+            <GameCard  title={folder.name} img={folder.url} isBig={true} />
         </div>
         <div className={s.child_cards}>
             {folder.folders.map(item => {
