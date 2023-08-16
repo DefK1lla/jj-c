@@ -15,10 +15,17 @@
     object-fit: cover;
   }
 }
+
+.big_title { 
+  font-size: "32px"; 
+  line-height: "32px";
+}
+
 .title {
   display: inline-block;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 20px;
+  font-weight: 700;
   align-self: flex-start;
   padding: 5px 0;
   margin-left: 15px;

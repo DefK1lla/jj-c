@@ -1,4 +1,4 @@
-export const file = {
+export const folder = {
     id: "1",
     name: "The crown of the leaves",
     url: "https://i.pinimg.com/originals/6d/c6/e3/6dc6e347afe43efebaedfa96d0099ab4.jpg",

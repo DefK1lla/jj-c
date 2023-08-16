@@ -1,5 +1,5 @@
 import { Button, GameCard, Input } from '../../components'
-import { mockFilesGames } from '../../shared/mockfile/mock';
+import { mockFilesGames } from '../../shared/mockfolder/mock';
 export const ExamplePage = () => {
   return (
     <>

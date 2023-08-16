@@ -7,13 +7,15 @@
     padding-left: 55px;
     padding-right: 55px;
     width: calc(100vw - 950px);
-    min-width: 360px;
-    max-width: 900px;
+    min-width: 440px;
+    max-width: 950px;
 }
 
 .progress_bar_container {
     display: grid;
     row-gap: 25px;
+    max-height: 240px;
+    overflow: scroll;
 }
 
 .progress_bar_title {

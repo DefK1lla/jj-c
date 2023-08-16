@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Menu } from '../../components/Menu/Menu';
 import { GameCard } from '../../components/GameCard/GameCard';
-import { file } from '../../shared/mockfile/mock_file';
+import { folder } from '../../shared/mockfolder/mock_folder';
 
 import s from "./folderPage.module.scss";
 
@@ -11,10 +11,10 @@ export const FolderPage = () => {
     <div className={s.main_container}>
       <div className={s.container}>
         <div className={s.main_card}>
-            <GameCard  title={file.name} img={file.url} />
+            <GameCard  title={folder.name} img={folder.url} isBig={true} />
         </div>
         <div className={s.child_cards}>
-            {file.folders.map(item => {
+            {folder.folders.map(item => {
               return <GameCard title={item.name} img={item.url} />
             })}
         </div>
