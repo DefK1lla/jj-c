@@ -1,3 +1,5 @@
+@use 'styles' as *;
+
 .pagination_container {
     display: flex;
     width: 100%;
@@ -7,5 +9,5 @@
 }
 
 .active {
-    background-color: #fc0fc0;
+    background-color: $color-light-pink;
 }
