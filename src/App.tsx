@@ -10,8 +10,6 @@ const App: FC = () => {
   return (
     <div className='App'>
       <Header />
-      
-
       <BrowserRouter>
         <Routes>
           <Route index element={<HomePage />} />
@@ -20,7 +18,7 @@ const App: FC = () => {
           })}
         </Routes>
       </BrowserRouter>
-      {/* <ProgressBar percent={50} name='test'/> */}
+      
     </div>
   )
 }
