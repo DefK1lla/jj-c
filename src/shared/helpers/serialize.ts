@@ -14,6 +14,7 @@ export type Slice = {
 	setScoreByAuthorId: (id: string, score: number) => null | void;
 	setDataByAuthorId: (id: string, data: any) => null | void;
 	getDataId: () => string;
+	author: any[];
 	[key: string]: any;
 }
 

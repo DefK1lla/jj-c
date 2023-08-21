@@ -5,6 +5,7 @@ import cn from "classnames"
 interface ButtonProps {
   onClick?: () => void
   children: string
+  ref?: React.RefObject<HTMLButtonElement>
   action?: "increase" | "decrease"
 
 }
