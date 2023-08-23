@@ -1,7 +1,8 @@
-import { FC } from "react";
+import { FC, useId } from "react";
+
+import { mockFilesGames } from "../../shared/mockfolder/mock";
 
 import s from "./gameFileName.module.scss";
-import { mockFilesGames } from "../../shared/mockfolder/mock";
 
 export const GameFileName: FC = () => {
     const items = ():string[] => {
@@ -19,7 +20,8 @@ export const GameFileName: FC = () => {
     return(
         <div className={s.container}>
             {items().map(item => {
-                return <div className={s.name}>{item}</div>
+                const id = useId()
+                return <div key={id} className={s.name}>{item}</div>
             })}
         </div>
     )

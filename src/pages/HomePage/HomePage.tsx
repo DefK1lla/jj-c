@@ -1,20 +1,47 @@
-import { FC } from 'react'
+import { FC, useId, useState, useEffect } from 'react'
 
-import { ExamplePage } from '../ExamplePage/ExamplePage';
 import { mockFilesGames, mockFilesUsers } from '../../shared/mockfolder/mock';
 import { GameCard } from '../../components';
-import s from "./homePage.module.scss";
 import { Menu } from '../../components/Menu/Menu';
 
+import s from "./homePage.module.scss";
+
 export const HomePage = () => {
+  const [games, setGames] = useState<any[]>([]);
+
+  useEffect(() => {
+    
+    async function getGames() {
+      try {
+        
+        const response = await fetch("http://localhost:7000/game", {
+          method: "GET",
+        });
+        
+        const data = await response.json();
+        
+        setGames(data);
+      } catch (error) {
+        
+        console.error(error);
+      }
+    }
+    
+    getGames();
+  }, []); 
+                                                   
   return (<div className={s.mainContainer}>
     <div className={s.container}>{
-        mockFilesGames.map((item) => {
-        return <GameCard img={item.url} title={item.name} />
+        games.map((item) => {
+        return (
+          <a className={s.route} href={`/folder?id=${item.id}`}>
+            <GameCard key={item.name} img={item.img} title={item.name} />
+          </a>
+          )
         })
       }
     </div>
-      <Menu />
+      <Menu buttonType={"CREATE GAME"}/>
     </div>
   )
 }

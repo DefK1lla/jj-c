@@ -1,6 +1,8 @@
 import { FC } from "react";
 import s from "./gameCard.module.scss";
 
+
+
 interface GameCardProps {
   img: string;
   title: string;
@@ -10,7 +12,7 @@ interface GameCardProps {
 export const GameCard: FC<GameCardProps> = ({ img, title, isBig }) => {
   return (
     <div className={s.card}>
-      <img src={img} alt={title} />
+      <img src={`data:image/png;base64,${img}`} alt={title} />
       <span className={isBig ? s.big_title : s.title}>{title}</span>
     </div>
   );
