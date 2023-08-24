@@ -2,63 +2,63 @@ import { createSlice } from '@reduxjs/toolkit'
 import { IGame } from '../../shared/types/game'
 
 interface IGameState {
-    datas: IGame[]
-    data: IGame
+    games: {
+      data: IGame[]
+      request: boolean
+    }
+    game: {
+      data: IGame
+      request: boolean
+    }
 }
 
 interface IActionPayload {
   type: string
   payload: {
-    datas: IGame[]
-    data: IGame
+    games?:IGame[]
+    game?: IGame
   }
 }
 
 const initialState: IGameState = {
-  datas: [{
-    id: null,
-  name: null,
-  img: null,
-  author_id: null,
-  }],
-  data: {
-    id: null,
-  name: null,
-  img: null,
-  author_id: null,
+  games: { data: [{
+      id: null,
+    name: null,
+    img: null,
+    author_id: null,
+    }],
+    request: false
+  },
+  game: {
+    data: {
+      id: null,
+      name: null,
+      img: null,
+      author_id: null,
+    },
+    request: false
   }
 }
-
-
 
 const gameSlice = createSlice({
   name: 'gameSlice',
   initialState,
   reducers: {
-    newGamesRequested: (state, action: IActionPayload) => {
-      state.datas.concat(action.payload.datas.map((data: IGame) => {
-        return {
-          id: data.id,
-          name: data.name,
-          img: data.img,
-          author_id: data.author_id
-        }
-      }))
+    newGamesRequest: (state, action: IActionPayload) => {
+      state!.games.data = action.payload.games!.map((item) => {
+        return item
+      });
+      state.games.request = true;
     },
     newGameRequest: (state, action: IActionPayload) => {
-      state.data = {
-        id: action.payload.data.id,
-        name: action.payload.data.name,
-        img: action.payload.data.img,
-        author_id: action.payload.data.author_id
-      } 
+      state.game.data = action.payload.game!
+      state.game.request = true
     }
   }
 })
 
-// Action creators are generated for each case reducer function
 export const {
-  newGamesRequested,
+  newGamesRequest,
   newGameRequest
 } = gameSlice.actions
 

@@ -1,66 +1,68 @@
 import React, { useEffect, useState } from 'react'
 
+import { useAppDispatch, useAppSelector } from '../../shared/hooks/redux';
 import { Menu } from '../../components/Menu/Menu';
 import { GameCard  } from '../../components/GameCard/GameCard';
+import { filesGet } from '../../shared/api/routs/file';
+import { folderGet } from '../../shared/api/routs/folder';
+import { newFilesRequest } from '../../store/slice/fileSlice';
+import { newFolderRequest } from '../../store/slice/folderSlice';
+
 
 import s from "./filePage.module.scss";
 
-interface IFile {
-  id: string;
-  name: string;
-  data: string;
-  local:string;
-  folder_id: string;
-}
-
-
 export const FilePage = () => {
-  const [files, setFiles] = useState<IFile[]>([]);
-  const [folder, setFolder] = useState<any>({name: "", img: ""});
+  const dispatch = useAppDispatch();
+
+  const { folder } = useAppSelector(
+    state => state.folder
+  )
+  const { files } = useAppSelector(
+    state => state.file
+  )
+
+  const getFiles = async (id: string) => {
+    try{
+      const data = await filesGet({ id: id });
+      const folder = await folderGet({ id: id });
+
+      dispatch(newFilesRequest({ files: data.data }))
+      dispatch(newFolderRequest({ folder: folder.data}))
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   const id = window.location.search.slice(1).split("=")[1];
 
-  useEffect(() => {
-    async function getFolder() {
-      const getfolder = await fetch("http://localhost:7000/folder/id", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: id })
-        });
-        const data = await getfolder.json();
-        setFolder(data);
-      }
-
-    getFolder();
-
-    async function getFiles() {
-      const getFiles = await fetch("http://localhost:7000/file/id", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: id })
-      });
-      
-      const data = await getFiles.json();
-      console.log(data)
-      setFiles(data)
+  function folderDone() {
+    if(!folder.data.id) {
+      return null
+    } else {
+       return <GameCard  title={folder.data.name!} img={folder.data.img!} isBig={true}/>
     }
+  }
+  useEffect(() => {
 
-    getFiles();
-  }, [])
+    getFiles(id);
+
+  }, [files.request])
   return (
     <div className={s.main_container}>
       <div className={s.container}>
         <div className={s.main_card}>
-            <GameCard  title={folder.name} img={folder.img} isBig={true}/>
+            {
+              folderDone()
+            }
         </div>
         <div className={s.files}>
           {
-            files.map((item: IFile) => {
-              return <div className={s.file}>{item.name} {item.local}</div>
+            files.data.map((item) => {
+              if (!item.id) {
+                return <div className={s.title}>Loading...</div>
+              } else {
+                return <div className={s.file}>{item.name} {item.local}</div>
+              }
             })
           }
         </div>

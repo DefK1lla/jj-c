@@ -1,67 +1,71 @@
 import React, {useEffect, useState} from 'react'
 
+import { useAppDispatch, useAppSelector } from '../../shared/hooks/redux';
 import { Menu } from '../../components/Menu/Menu';
 import { GameCard } from '../../components/GameCard/GameCard';
-import { folder } from '../../shared/mockfolder/mock_folder';
+import { foldersGet } from '../../shared/api/routs/folder';
+import { gameGet } from '../../shared/api/routs/game';
+import { newFoldersRequest } from "../../store/slice/folderSlice";
+import { newGameRequest } from '../../store/slice/gameSlice';
 
 import s from "./folderPage.module.scss";
 
-interface IFolders {
-  
-}
-
 export const FolderPage = () => {
-  const [folders, setFolders] = useState<any[]>([]);
-  const [game, setGame] = useState<any>({})
-  const id: string = window.location.search.slice(1).split("=")[1];
-  useEffect(() => {
-    
-    async function getFolders() {
-      try {
-        const res = await fetch("http://localhost:7000/game/id", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: id })
-        });
-        const gameData = await res.json();
+  const dispatch = useAppDispatch();
 
-        setGame(gameData);
-        
-        const response = await fetch("http://localhost:7000/folder/gameId", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: id })
-        });
-        
-        const data = await response.json();
-        setFolders(data);
-      } catch (error) {
-        
-        console.error(error);
-      }
+  const { game } = useAppSelector(
+    state => state.game
+  )
+  const { folders } = useAppSelector(
+    state => state.folder
+  )
+
+  const getFolders = async (id: string) => {
+    try {
+      const data = await foldersGet({ id: id});
+      const game = await gameGet({ id: id });
+
+      dispatch(newFoldersRequest({ folders: data.data }))
+      dispatch(newGameRequest({ game: game.data }))
+    } catch (e) {
+      console.error(e)
     }
-    
-    getFolders();
-  }, []); 
+  }
+  
+  const id: string = window.location.search.slice(1).split("=")[1];
+
+  function gameDone() {
+    if (!game.data.id) {
+      return null
+    } else {
+      return <GameCard  title={game.data.name!} img={game.data.img!} isBig={true} />
+    }
+  }
+  useEffect(() => {
+
+    getFolders(id);
+
+  }, [folders.request]); 
 
   return (
     <div className={s.main_container}>
       <div className={s.container}>
         <div className={s.main_card}>
-            <GameCard  title={game.name} img={game.img} isBig={true} />
+          {
+            gameDone()
+          }
         </div>
         <div className={s.child_cards}>
-            {folders.map(item => {
-              console.log(item.id)
-              return (
-                <a className={s.route} href={`/file?id=${item.id}`}>
-                  <GameCard title={item.name} img={item.img} />
-                </a>
-              )
+            {folders.data.map(item => {
+              if (!item.id) {
+                return <div className={s.title}>Loading...</div>
+              } else {
+                return (
+                  <a className={s.route} href={`/file?id=${item.id}`}>
+                    <GameCard title={item.name!} img={item.img!} />
+                  </a>
+                )
+              }
             })}
         </div>
       </div>
