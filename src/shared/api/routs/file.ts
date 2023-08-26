@@ -3,7 +3,8 @@ import {
     IGetFile,
     ISetFile,
     IDeleteFile,
-    IUpdateFile
+    IUpdateFile,
+    ISetTranslate
 } from '../../types/file'
 
 import { api, endpoints_file} from '../index'
@@ -25,6 +26,12 @@ export const fileSet = (
     setFileForm: ISetFile
 ): AxiosPromise<IFile> => {
     return api.post(endpoints_file.set_file, setFileForm)
+}
+
+export const translateSet = (
+    setTranslateForm: ISetTranslate
+): AxiosPromise<IFile> => {
+    return api.post(endpoints_file.set_translate, setTranslateForm)
 }
 
 export const fileDelete = (

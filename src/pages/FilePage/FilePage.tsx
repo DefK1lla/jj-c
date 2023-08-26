@@ -20,6 +20,7 @@ export const FilePage = () => {
   const { files } = useAppSelector(
     state => state.file
   )
+  const id = window.location.search.slice(1).split("=")[1];
 
   const getFiles = async (id: string) => {
     try{
@@ -33,7 +34,6 @@ export const FilePage = () => {
     }
   }
 
-  const id = window.location.search.slice(1).split("=")[1];
 
   function folderDone() {
     if(!folder.data.id) {
@@ -58,10 +58,15 @@ export const FilePage = () => {
         <div className={s.files}>
           {
             files.data.map((item) => {
-              if (!item.id) {
+              console.log(item)
+              if (!item.folder_id) {
                 return <div className={s.title}>Loading...</div>
               } else {
-                return <div className={s.file}>{item.name} {item.local}</div>
+                return (
+                  <a className={s.route} href={`/translate?id=${item.id}`}>
+                    <div className={s.file}>{item.name} {item.local}</div>
+                  </a>
+                )
               }
             })
           }

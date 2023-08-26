@@ -9,10 +9,10 @@ type Serialize = {
 }
 
 export type Slice = {
-	setAuthor: (id: string, name: string, data: any, score: number) => void;
+	setAuthor: (id: string, name: string, data: any, key: string, score: number) => void;
 	deleteAuthor: (id: string) => null | void;
 	setScoreByAuthorId: (id: string, score: number) => null | void;
-	setDataByAuthorId: (id: string, data: any) => null | void;
+	setDataByAuthorId: (id: string, data: any, key: string) => null | void;
 	getDataId: () => string;
 	author: any[];
 	[key: string]: any;
@@ -40,21 +40,17 @@ function serialize(datas: any): Serialize {
 
 				} else {
 
-					if (obj.setAuthor === undefined) {
+					if (obj.setAuthor === undefined && obj.__isAuthorElement === undefined) {
 						
 						Object.defineProperties(obj, {
-							__id : {
-								value:"id" + Math.random().toString(16).slice(2) + Math.random().toString(16).slice(2) ,
-								
-							},
 							setAuthor: {
-								value: function(id: string,name: string, data: any, score: number) {
+								value: function(id: string,name: string, data: any, key:string , score: number) {
 
 									if (!Array.isArray(this.author)) {
-										this.author = [];
+										obj.author = [];
 									}
-
-									this.author.push({ id: id, name: name, score: score, data: data });
+									
+									obj.author.push({ id: id, name: name, score: score, [key]: data, __isAuthorElement: "__isAuthorElement" });
 								},
 								enumerable: true
 							},
@@ -66,7 +62,7 @@ function serialize(datas: any): Serialize {
 										return null;
 									}
 
-									this.author.forEach((item: any, index: number, arr: any) => {
+									obj.author.forEach((item: any, index: number, arr: any) => {
 										if(arr[index].id === id) {
 											arr.splice(index, 1);
 										}
@@ -81,7 +77,7 @@ function serialize(datas: any): Serialize {
 										return null;
 									}
 									
-									this.author.forEach(function(item: any, index: number, array: any) {
+									obj.author.forEach(function(item: any, index: number, array: any) {
 										if (item.id === id) {
 											array[index].score = score;
 										}								
@@ -91,14 +87,14 @@ function serialize(datas: any): Serialize {
 							},
 
 							setDataByAuthorId: {
-								value: function(id: string, data: any) {
+								value: function(id: string, data: any, key: string) {
 									if(!Array.isArray(this.author)) {
 										return null;
 									}
 									
-									this.author.forEach(function(item: any, index: number, array: any) {
+									obj.author.forEach(function(item: any, index: number, array: any) {
 										if (item.id === id) {
-											array[index].data = data;
+											array[index][key] = data;
 										}								
 									});
 								},
@@ -107,7 +103,7 @@ function serialize(datas: any): Serialize {
 
 							exports: {
 								value: function(method: "score" | "name", name?: string) {
-									delete obj.__id;
+									
 									if (obj.author) {
 
 										if (method === "score")	{
@@ -116,12 +112,15 @@ function serialize(datas: any): Serialize {
 												return a.score > b.score ? -1 : 1;
 											});
 
-											const temp = obj.author[0].data;
-
-											for(let key in temp) {
-												obj[key] = temp[key];
-											}
-
+											const temp = obj.author[0];
+											const keys = Object.keys(temp);
+											keys.forEach((item) => {
+												for(let i in obj){
+													if (item == i && typeof obj[item] !== "function" ) {
+														obj[item] = temp[item]
+													}
+												}
+											})
 											delete obj.author;
 											
 										}
@@ -142,22 +141,18 @@ function serialize(datas: any): Serialize {
 								},
 								enumerable: true
 							},
-
-							getDataId: {
-								value: function () {
-									return obj.__id;
-								},
-								enumerable: true
-							}
 						}); 
 						exportst.push(obj.exports);
 						let temp: any = {};
 						for(let j in obj) {
 							if (typeof(obj[j]) !== "object") {
 								temp[j] = obj[j];
+							} else if (j === "author") {
+								temp[j] = obj[j]
 							}
+												
 						}
-
+	
 						slices.push(temp);
 					}
 				}

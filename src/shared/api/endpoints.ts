@@ -21,17 +21,18 @@ export const endpoints_game = {
 }
 
 export const endpoints_folder = {
-  get_folders: 'folder/all',
-  get_folder: 'folder/id',
-  set_folder: 'folder/set',
-  delete_folder: 'folder/delete',
-  update_folder: 'folder/update'
+  get_folders: '/folder/all',
+  get_folder: '/folder/id',
+  set_folder: '/folder/set',
+  delete_folder: '/folder/delete',
+  update_folder: '/folder/update'
 }
 
 export const endpoints_file = {
-  get_files: 'file/all',
-  get_file: 'file/id',
-  set_file: 'file/set',
-  delete_file: 'file/delete',
-  update_file: 'file/update'
+  get_files: '/file/all',
+  get_file: '/file/id',
+  set_file: '/file/set',
+  set_translate: '/file/translate',
+  delete_file: '/file/delete',
+  update_file: '/file/update'
 }

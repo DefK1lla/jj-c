@@ -28,6 +28,7 @@ const initialState: IFileState = {
                 name: null,
                 data: null,
                 local: null,
+                translate: null,
                 folder_id: null
             }
         ],
@@ -39,6 +40,7 @@ const initialState: IFileState = {
             name: null,
             data: null,
             local: null,
+            translate: null,
             folder_id: null
         },
         request: false

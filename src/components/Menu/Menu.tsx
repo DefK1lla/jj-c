@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 
 import { Avatar } from "../Avatar/Avatar";
 import { mockFilesUsers } from "../../shared/mockfolder/mock";
@@ -6,14 +6,16 @@ import { GameFileName } from "../GameFileName/GameFileName";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
 import { percents } from "../../shared/mockfolder/mock_percents";
-import cn from "classnames";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks/redux";
+import { gameSet } from "../../shared/api/routs/game";
+import { folderSet } from "../../shared/api/routs/folder";
+import { fileSet } from "../../shared/api/routs/file";
 
 import s from "./menu.module.scss";
 
 
 interface Menu {
     buttonType: "CREATE GAME" | "CREATE FOLDER" | "UPLOAD .JSON";
-    id?: string;
     haveProgressBarr?: boolean;
 }
 
@@ -26,79 +28,128 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     }
     const id = window.location.search.slice(1).split("=")[1];
     const [isVisible, setIsVisible] = useState(false)
+    const [message, setMessage] = useState<string | undefined>(undefined);
     function onClickButton() {
          setIsVisible(!isVisible);
     }
 
     function formElements() {
+        useEffect(() => {
 
+        }, [message])
         return (
             <>
                 <div className={s.popup_input}>
                     <label className={s.popup_label} htmlFor="name">name</label>
                     <input type={"text"} name="name" id="name"required />
                 </div>
+                {
+                    buttonType === "UPLOAD .JSON" ? (
+                        <div className={s.popup_radio}>
+                            <input type={'radio'} id="lah" name={"radio"} value={"lah"} required />
+                            <label htmlFor="lah">Latvian</label>
+                            <br/>
+                            <input type={"radio"} id ="lit" name={"radio"} value={"lit"} />
+                            <label htmlFor="lit">Lithuanian</label>
+                            <br/>
+                            <input type={"radio"} id="est" name={"radio"} value={"est"} />
+                            <label htmlFor="est">Estonian</label>
+                        </div> ) : null
+                }
                 <div className={s.popup_input}>
                     <label className={s.popup_label} htmlFor="file">{label}</label>
                     <input className={s.input} type={"file"} name={label} required id="file"/>
+                    {
+                        typeof message === "undefined" ? null : <div className={s.warn}>{message}</div>
+                    }
                 </div>
-                <input className={s.popup_submit} onClick={() => {return null}} type={"submit"} value={"SAVE"}/>
+                <input className={s.popup_submit} type={"submit"} value={"SAVE"}/>
             </>
         )
     }
 
-    function onSubmit(event:any) {
+    function setGame(event: any, subEvent: ProgressEvent<FileReader>) {
+        const base64 = subEvent.target?.result;
+
+        const json = {
+            name: event.target.name.value,
+            author_id: id,
+            img: base64
+        }
+
+        gameSet(json)
+
+        .finally(() => {
+            window.location.reload()
+        })
+
+    }
+
+    function setFolder(event: any, subEvent: ProgressEvent<FileReader>) {
+        const base64 = subEvent.target?.result;
+
+        const json = {
+            name: event.target.name.value,
+            game_id: id,
+            img: base64
+        }
+
+        folderSet(json)
+
+        .finally(() => {
+            window.location.reload()
+        })
+    }
+
+    function setFile(event: any, reader: FileReader) {
+        try {
+            if (typeof reader.result === "string"){
+                JSON.parse(reader.result)
+                setMessage(undefined);
+            const json = {
+                name: event.target.name.value,
+                local: event.target.radio.value,
+                data: reader.result,
+                folder_id: id
+            }
+
+            fileSet(json)
+
+            .finally(() => {
+                window.location.reload()
+            })
+            }
+
+        } catch (e: any) {
+            console.log(e.message)
+            setMessage('is not valid json file')
+        }
+    }
+
+    function onSubmit(event: any) {
         event.preventDefault();
         
         const file = (document.getElementById("file") as HTMLInputElement)?.files?.[0];
         if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = function(subEvent) {
-                const base64 = subEvent.target?.result;
-                
+            const reader = new FileReader()
+            reader.onload = function(subEvent) {   
                 if (buttonType === "CREATE GAME") {
-                    const json = JSON.stringify({
-                        name: event.target.name.value,
-                        author_id: id,
-                        img: base64
-                    })
-                    fetch("http://localhost:7000/game", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: json
-                    }).catch((e) => {
-                        alert(e.message);
-                    }).finally(() => {
-                        window.location.reload()
-                    }); 
+
+                    setGame(event, subEvent)
+
                 } else if (buttonType === "CREATE FOLDER") {
-                    console.log(id)
-                    const json = JSON.stringify({
-                        name: event.target.name.value,
-                        game_id: id,
-                        img: base64
-                    })
-                    fetch("http://localhost:7000/folder", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: json
-                    }).catch((e) => {
-                        alert(e.message);
-                    }).finally(() => {
-                        window.location.reload();
-                    }); 
+                    setFolder(event, subEvent)
                 }
-                
             }
-            reader.readAsDataURL(file);
-
-        }
-        
-
+            reader.readAsDataURL(file)
+            
+        } else if(file) {
+            const reader = new FileReader()
+            reader.onload = function(subEvent) {
+                setFile(event, reader)
+            }
+            reader.readAsText(file)
+        }        
     }
 
 
@@ -110,7 +161,6 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
             {haveProgressBarr ? percents.map(item => {
                return <ProgressBar percent={item.percent} name={item.name} />
             }) : null}
-
             </div>
             <div className={s.recent_json_title}>Recent jsons</div>
             <GameFileName />
