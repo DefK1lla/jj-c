@@ -9,6 +9,7 @@ import { newFoldersRequest } from "../../store/slice/folderSlice";
 import { newGameRequest } from '../../store/slice/gameSlice';
 
 import s from "./folderPage.module.scss";
+import { Link } from 'react-router-dom';
 
 export const FolderPage = () => {
   const dispatch = useAppDispatch();
@@ -61,9 +62,9 @@ export const FolderPage = () => {
                 return <div className={s.title}>Loading...</div>
               } else {
                 return (
-                  <a className={s.route} href={`/file?id=${item.id}`}>
+                  <Link className={s.route} to={`/file?id=${item.id}`}>
                     <GameCard title={item.name!} img={item.img!} />
-                  </a>
+                  </Link>
                 )
               }
             })}

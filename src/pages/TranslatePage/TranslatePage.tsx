@@ -1,23 +1,70 @@
-import React, { useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '../../shared/hooks/redux';
 import { serialize, split, Slice} from '../../shared/helpers/serialize';
 import { Button } from '../../components/Button/Button';
 import { Pagination } from '../../components/Pagination/Pagination';
 import { fileGet, translateSet } from '../../shared/api/routs/file';
+import { getUser } from '../../shared/api/routs/user';
 import { newFileRequest } from '../../store/slice/fileSlice';
 import cn from "classnames"
 
 import s from './translate.module.scss';
+import { IAuth } from '../../shared/types/user';
+
+interface IAuthor {
+  item: Slice
+  items: any
+  itemsKey: string
+
+}
+
+const Author: FC<IAuthor> = ({ item, items, itemsKey }) => {
+  const [score, setScore] = useState<number | null>(items[itemsKey + "__score__"])
+  function plus() {
+    setScore(item.setScoreByAuthorId(items.id, "+", itemsKey))
+
+  }
+  function minus() {
+    setScore(item.setScoreByAuthorId(items.id, "-", itemsKey))
+    
+  }
+
+  if (items[itemsKey]) {
+    
+    return (
+      <div className={s.author_container}>
+        <div className={s.author_text}>
+          {items[itemsKey]}
+        </div>
+        <div className={s.score_container}>
+          <div className={s.score}>{score}</div>
+          <button onClick={plus} className={s.plus}>+</button>
+          <button  onClick={minus} className={s.minus}>-</button>
+        </div>
+        <div className={s.author_name}>
+          {items.name}
+        </div>
+      </div>
+    )
+  } else {
+    return null
+  }
+}
 
 export const TranslatePage = () => {
   const id = window.location.search.slice(1).split("=")[1];
   const dispatch = useAppDispatch();
-  const author = "Adam";
   const { file } = useAppSelector(
     state => state.file
   )
+
+  const [author, setAuthor] = useState<IAuth | any>()
   
+  async function getAuthor() {
+    setAuthor((await getUser()).data)
+  }
+
   const getFile = async () => {
     try {
       const data = await fileGet({ id: id })
@@ -42,12 +89,26 @@ export const TranslatePage = () => {
   const sliced = translate.slice(0 + (selectedPage * 10), 10 + (selectedPage * 10));
   const objCounts = sliced.map(item => Object.keys(item).length);
 	const buttonSeesArr:string[][] = objCounts.map(count => new Array(count).fill("see"));
+  const scoresArr:number[][][] = objCounts.map(count => new Array(count).fill("see"))
 	const isHidesArr:boolean[][] = objCounts.map(count => new Array(count).fill(true));
-	
+
 	const [buttonSees, setButtonSees] = useState<string[][]>([]);
 	const [isHides, setIsHides] = useState<boolean[][]>([]);
- 
+  const [scores, setScores] = useState<number[][][]>(scoresArr)
   const [refresh, setRefersh] = useState(false)
+
+  // setScores((it) => {
+
+  //    const items = translate.slice(0 + (selectedPage * 10), 10 + (selectedPage * 10)).map((item: Slice) => item)
+  //     return author?.map((item: any, authIndex: number) => {
+  //       if(typeof it[index] === "undefined") {
+  //         return []
+  //       }
+  //       return  author[author.id]
+  //     })
+       
+
+  // })
 
 	useEffect(() => {
     if (buttonSees.length === 0) {
@@ -57,9 +118,10 @@ export const TranslatePage = () => {
     if (isHides.length === 0) {
       setIsHides(isHidesArr)
     }
+    getAuthor()
     getFile()
-
-	}, [file.request, refresh])
+    
+	}, [file.request, refresh, scores])
 
   function downloadOnClick() {
     serialized.export("score");
@@ -82,7 +144,7 @@ export const TranslatePage = () => {
       translate: json
     }
     translateSet(data)
-
+    
     .finally(() => {
       window.location.reload();
     })
@@ -148,13 +210,24 @@ export const TranslatePage = () => {
 			{
 			  translate.slice(0 + (selectedPage * 10), 10 + (selectedPage * 10)).map((item: Slice, index: number) => {
 				const id = Math.random().toString()
+        // setScores((it)a => {
+        //   console.log(item)
+        //   item.author?.map((author, authIndex) => {
+        //     if(typeof it[index] === "undefined") {
+        //       it[index] = []
+        //     }
+        //     it[index][authIndex] = author[author.id]
+        //   })
+        //   return it
+
+        // })
 			  
 				const elements = Object.entries(item)
 				.filter(([key, value]) =>  typeof value !== "function" )
 				.map(([key, value], subIndex) => {
           if(key === "author" && Array.isArray(value)) {
             return value.find((elm)=>{
-              console.log(elm.__isAuthorElement)
+              
               if(elm.__isAuthorElement === "__isAuthorElement") return null
             })
           }
@@ -193,52 +266,106 @@ export const TranslatePage = () => {
           };  
           let inputValue: any = "";
           function onInputChange(event: any) {
+            
+            if ( author  === "Unauthorized") {
+              return null
+            }
             const data = event.target.value.includes("||") ? event.target.value.split("||") : event.target.value
+            const key = event.target.name
             
             if (typeof item.author === "undefined") {
-              item.setAuthor("123", author, data, key, 0)
-            } else if (item.author.find((value: any) => {
-              return value.name !== author 
+              console.log(item.author)
+              item.setAuthor(author.id, author.username, data, key, 0)
+            } else if (!item.author.find((value: any) => {
+              return value.name === author.username
             })) {
-              item.setAuthor("123", author, data, key, 0)
+
+              item.setAuthor(author.id, author.username, data, key, 0)
             } else {
-              item.setDataByAuthorId("123", data, key)
+
+              item.setDataByAuthorId(author.id, data, key)
             }
-            inputValue = item.author?.find((value: any) => {
-              return value.name === author ? value.data : data
-            })
+            inputValue = data
           }
           
 				  return(<>
 					<div key={`${key}_${Math.random()}`} id={id} className={s.translate_elements}>
-					  <textarea rows={3} onChange={onInputChange} id={id} className={s.element_input} value={inputValue.data}></textarea>
+					  <textarea rows={3} name={key} onChange={onInputChange} id={id} className={s.element_input}></textarea>
 					  <Button onClick={onClickInputButton}>{buttonSees[index]?.[subIndex]}</Button>
 					</div>
           
 					<div className={isHides[index]?.[subIndex] ? s.hide : s.authors}>
 					  <div className={s.authors_title}>Version of translation:</div>
 					  {
-						  item.author?.map((items: any) => {
-                if (items[key]) {
+						  item.author?.map((items: any, authIndex) => {
+                return <Author item={item} items={items} itemsKey={key} />
+                // function plus() {
+                //   console.log(refresh, "items")
+                //   let result = item.setScoreByAuthorId(items.id, "+")
+                //   setScores(scores => scores.map((score, i) => {
+                //     if (i === index) {
+                //       return score.map((scor, j) => {
+                //         if (j === subIndex) {
+                //           return scor.map((s, t) => {
+                //             if(t === authIndex){
+                //               return s + 1
+                //             } else {
+                //               return s
+                //             }
+                //           })
+                //         } else {
+                //           return scor;
+                //         }
+                //       });
+                //     } else {
+                //       return score;
+                //     }
+                //   }));
+                // }
+                // function minus() {
+                //   console.log(refresh, "items")
+                //   item.setScoreByAuthorId(items.id, "-")
+                //   setScores(scores => scores.map((score, i) => {
+                //     if (i === index) {
+                //       return score.map((scor, j) => {
+                //         if (j === subIndex) {
+                //           return scor.map((s, t) => {
+                //             if(t === authIndex){
+                //               return s - 1
+                //             } else {
+                //               return s
+                //             }
+                //           })
+                //         } else {
+                //           return scor;
+                //         }
+                //       });
+                //     } else {
+                //       return score;
+                //     }
+                //   }));
+                // }
+
+                // if (items[key]) {
                   
-                  return (
-                    <div className={s.author_container}>
-                      <div className={s.author_text}>
-                        {items[key]}
-                      </div>
-                      <div className={s.score_container}>
-                        <div className={s.score}>{items.score}</div>
-                        <button className={s.plus}>+</button>
-                        <button className={s.minus}>-</button>
-                      </div>
-                      <div className={s.author_name}>
-                        {items.name}
-                      </div>
-                    </div>
-                  )
-                } else {
-                  return null
-                }
+                //   return (
+                //     <div className={s.author_container}>
+                //       <div className={s.author_text}>
+                //         {items[key]}
+                //       </div>
+                //       <div className={s.score_container}>
+                //         <div className={s.score}>{scores[index]?.[subIndex]?.[authIndex] ?? items[items.id]}</div>
+                //         <button onClick={plus} className={s.plus}>+</button>
+                //         <button  onClick={minus} className={s.minus}>-</button>
+                //       </div>
+                //       <div className={s.author_name}>
+                //         {items.name}
+                //       </div>
+                //     </div>
+                //   )
+                // } else {
+                //   return null
+                // }
 						  })
 						}
 					</div>

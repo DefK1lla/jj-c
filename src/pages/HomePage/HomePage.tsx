@@ -7,6 +7,7 @@ import { gamesGet } from '../../shared/api/routs/game';
 import { newGamesRequest } from '../../store/slice/gameSlice';
 
 import s from "./homePage.module.scss";
+import { Link } from 'react-router-dom';
 
 export const HomePage = () => {
   const dispatch = useAppDispatch();
@@ -37,9 +38,9 @@ export const HomePage = () => {
                 return <div className={s.title}>Loading...</div>
               } else {
                 return (
-                  <a className={s.route} href={`/folder?id=${item.id}`}>
-                    <GameCard key={item.name} img={item.img!} title={item.name!} />
-                  </a>
+                  <Link key={item.id} className={s.route} to={`/folder?id=${item.id}`}>
+                    <GameCard key={item.id} img={item.img!} title={item.name!} />
+                  </Link>
                   )
               }
            })

@@ -10,6 +10,7 @@ import { newFolderRequest } from '../../store/slice/folderSlice';
 
 
 import s from "./filePage.module.scss";
+import { Link } from 'react-router-dom';
 
 export const FilePage = () => {
   const dispatch = useAppDispatch();
@@ -63,9 +64,9 @@ export const FilePage = () => {
                 return <div className={s.title}>Loading...</div>
               } else {
                 return (
-                  <a className={s.route} href={`/translate?id=${item.id}`}>
+                  <Link className={s.route} to={`/translate?id=${item.id}`}>
                     <div className={s.file}>{item.name} {item.local}</div>
-                  </a>
+                  </Link>
                 )
               }
             })

@@ -12,10 +12,12 @@ export const BASE_URL = 'http://localhost:7000'
 
 export const api = Axios.create({
   baseURL: BASE_URL + '/',
+  withCredentials: true,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
+  
 })
 
 api.interceptors.request.use(

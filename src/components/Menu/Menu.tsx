@@ -1,15 +1,17 @@
 import { FC, useState, useEffect } from "react";
 
 import { Avatar } from "../Avatar/Avatar";
-import { mockFilesUsers } from "../../shared/mockfolder/mock";
 import { GameFileName } from "../GameFileName/GameFileName";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
-import { percents } from "../../shared/mockfolder/mock_percents";
+import { percents } from "../../shared/mockfolder/mock_percents"; //.
 import { useAppDispatch, useAppSelector } from "../../shared/hooks/redux";
 import { gameSet } from "../../shared/api/routs/game";
 import { folderSet } from "../../shared/api/routs/folder";
 import { fileSet } from "../../shared/api/routs/file";
+import { getUser } from '../../shared/api/routs/user';
+import { IAuth } from "../../shared/types/user";
+import { path } from "../../shared/constants/paths";
 
 import s from "./menu.module.scss";
 
@@ -27,16 +29,23 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
         label = "img"
     }
     const id = window.location.search.slice(1).split("=")[1];
+    const [author, setAuthor] = useState<IAuth | any>();
     const [isVisible, setIsVisible] = useState(false)
     const [message, setMessage] = useState<string | undefined>(undefined);
     function onClickButton() {
+        if (author?.id === undefined) {
+            alert("Unauthorized")
+            setTimeout(() => {
+                window.location.href = path.REGISTRATION_ROUTE
+            }, 500)
+            return null
+        }
          setIsVisible(!isVisible);
     }
-
+    async function getAuthor() {
+        setAuthor((await getUser()).data)
+    }
     function formElements() {
-        useEffect(() => {
-
-        }, [message])
         return (
             <>
                 <div className={s.popup_input}>
@@ -73,10 +82,10 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
 
         const json = {
             name: event.target.name.value,
-            author_id: id,
+            author_id: author.id,
             img: base64
         }
-
+        
         gameSet(json)
 
         .finally(() => {
@@ -87,6 +96,8 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
 
     function setFolder(event: any, subEvent: ProgressEvent<FileReader>) {
         const base64 = subEvent.target?.result;
+        
+
 
         const json = {
             name: event.target.name.value,
@@ -118,8 +129,8 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
             .finally(() => {
                 window.location.reload()
             })
-            }
-
+        }
+        
         } catch (e: any) {
             console.log(e.message)
             setMessage('is not valid json file')
@@ -151,11 +162,15 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
             reader.readAsText(file)
         }        
     }
+    
+    
+    useEffect(() => {
+        getAuthor()
 
-
+    }, [message])
     return(
         <div className={s.menu}>
-            <Avatar name={mockFilesUsers[0].name}/>
+            <Avatar name={author?.username}/>
             {haveProgressBarr ? <div className={s.progress_bar_title}>The Jackbox Party Starter</div> : null }
             <div className={s.progress_bar_container}>
             {haveProgressBarr ? percents.map(item => {

@@ -11,7 +11,7 @@ type Serialize = {
 export type Slice = {
 	setAuthor: (id: string, name: string, data: any, key: string, score: number) => void;
 	deleteAuthor: (id: string) => null | void;
-	setScoreByAuthorId: (id: string, score: number) => null | void;
+	setScoreByAuthorId: (id: string, value: "+" | "-", itemKey: string) => null | number;
 	setDataByAuthorId: (id: string, data: any, key: string) => null | void;
 	getDataId: () => string;
 	author: any[];
@@ -44,13 +44,13 @@ function serialize(datas: any): Serialize {
 						
 						Object.defineProperties(obj, {
 							setAuthor: {
-								value: function(id: string,name: string, data: any, key:string , score: number) {
+								value: function(id: string, name: string, data: any, key:string , score: number) {
 
 									if (!Array.isArray(this.author)) {
 										obj.author = [];
 									}
-									
-									obj.author.push({ id: id, name: name, score: score, [key]: data, __isAuthorElement: "__isAuthorElement" });
+									console.log({[key + "__score__"]: score})
+									obj.author.push({ id: id, name: name, [key + "__score__"]: score, [key]: data, __isAuthorElement: "__isAuthorElement" });
 								},
 								enumerable: true
 							},
@@ -72,16 +72,24 @@ function serialize(datas: any): Serialize {
 							},
 
 							setScoreByAuthorId: {	
-								value: function(id: string, score: number) {
+								value: function(id: string, value: "+" | "-", itemKey: string) {
 									if(!Array.isArray(this.author)) {
 										return null;
 									}
-									
+									let score = 0;
 									obj.author.forEach(function(item: any, index: number, array: any) {
 										if (item.id === id) {
-											array[index].score = score;
+											if(value === "+") {
+												array[index][itemKey + "__score__"]++;
+											} 
+											if (value === "-") {
+												array[index][itemKey + "__score__"]--;
+											}
+											score = array[index][itemKey + "__score__"]
 										}								
 									});
+									
+									return score;
 								},
 								enumerable: true
 							},
@@ -107,11 +115,24 @@ function serialize(datas: any): Serialize {
 									if (obj.author) {
 
 										if (method === "score")	{
+											const authorKeys = Object.entries(obj).map(([key, value]) => {
+												
+												if(typeof value !== "function" && typeof value !== "object") {
+													return key;
+												}
+											})
+											.filter((item) => {
+												return item ? true : false
+											})
 
-											obj.author.sort((a: { score: number }, b: { score: number }) => {
-												return a.score > b.score ? -1 : 1;
+											
+
+											obj.author.sort((a: { [key: string]: number }, b: { [key: string]: number }) => {
+												const key = authorKeys.find((item) => {
+													return typeof a[item + "__score__"] === "number" 	
+												})
+												return a[key + "__score__"] < b[key + "__score__"]
 											});
-
 											const temp = obj.author[0];
 											const keys = Object.keys(temp);
 											keys.forEach((item) => {
@@ -121,6 +142,7 @@ function serialize(datas: any): Serialize {
 													}
 												}
 											})
+											console.log(obj)
 											delete obj.author;
 											
 										}

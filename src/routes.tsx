@@ -18,6 +18,10 @@ export const routes = [
     Component: <AuthPage />
   },
   {
+    path: path.CHANE_PASSPORT_ROUTE,
+    Component: <AuthPage/>
+  },
+  {
     path: path.HOME_ROUTE,
     Component: <HomePage />
   },

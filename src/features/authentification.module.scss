@@ -1,3 +1,5 @@
+@use 'styles' as *;
+
 .container {
     display: flex; 
     justify-content: center; 
@@ -8,4 +10,18 @@
     display: flex;
     flex-direction: column;
     width: 20%;
+}
+
+.signin, .signup {
+    top: -40px;
+    position: relative;
+    text-align: center;
+    color: $color-white;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.login, .password {
+    min-width: 250px;
+    max-width: 350px;
 }
