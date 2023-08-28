@@ -49,7 +49,7 @@ function serialize(datas: any): Serialize {
 									if (!Array.isArray(this.author)) {
 										obj.author = [];
 									}
-									console.log({[key + "__score__"]: score})
+									
 									obj.author.push({ id: id, name: name, [key + "__score__"]: score, [key]: data, __isAuthorElement: "__isAuthorElement" });
 								},
 								enumerable: true
@@ -142,7 +142,7 @@ function serialize(datas: any): Serialize {
 													}
 												}
 											})
-											console.log(obj)
+											
 											delete obj.author;
 											
 										}

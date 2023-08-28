@@ -11,12 +11,96 @@ import cn from "classnames"
 
 import s from './translate.module.scss';
 import { IAuth } from '../../shared/types/user';
+import { Link } from 'react-router-dom';
+
+interface ICell {
+  value: any
+  setIsHides: React.Dispatch<React.SetStateAction<boolean[][]>>
+  index: number
+  subIndex: number
+  cellKey: string
+  isHides: boolean[][]
+  author: any
+  item: any
+}
 
 interface IAuthor {
   item: Slice
   items: any
   itemsKey: string
 
+}
+
+const Cell: FC<ICell> = ({ value, setIsHides, index, subIndex, cellKey, isHides, author, item}) => {
+  const [button, setButton] = useState<"See" | "Back">("See")
+  if(cellKey === "author" && Array.isArray(value)) {
+    return value.find((elm)=>{
+      if(elm.__isAuthorElement === "__isAuthorElement") return null
+    })
+  }
+  const onClickInputButton = () => {
+    setIsHides(prevIsHides => {
+        return prevIsHides.map((itemH, indexH) => {
+          if(indexH === index) {
+            return itemH.map((subItemH, subIndexH) => {
+              if (subIndex === subIndexH) {
+                return subItemH = !subItemH 
+              } else {
+                return subItemH
+              }
+            })
+          } else {
+            return itemH
+          }
+        })
+        
+      })
+      setButton((btn) => {
+        return btn === "See" ? "Back" : "See"
+      })
+  };  
+
+  let inputValue: any = "";
+  function onInputChange(event: any) {
+    
+    if ( author  === "Unauthorized") {
+      return null
+    }
+    
+    const data = event.target.value.includes("||") ? event.target.value.split("||") : event.target.value
+    const key = event.target.name
+    
+    if (typeof item.author === "undefined") {
+      console.log(item.author)
+      item.setAuthor(author.id, author.username, data, key, 0)
+    } else if (!item.author.find((value: any) => {
+      return value.name === author.username
+    })) {
+
+      item.setAuthor(author.id, author.username, data, key, 0)
+    } else {
+
+      item.setDataByAuthorId(author.id, data, key)
+    }
+    inputValue = data
+  }
+  
+  return(<>
+  <div key={`${cellKey}_${Math.random()}`} className={s.translate_elements}>
+    <textarea rows={3} name={cellKey} onChange={onInputChange} className={s.element_input}></textarea>
+    <Button onClick={onClickInputButton}>{button}</Button>
+  </div>
+  
+  <div className={isHides[index]?.[subIndex] ? s.hide : s.authors}>
+    <div className={s.authors_title}>Version of translation:</div>
+    {
+      item.author?.map((items: any) => {
+        return <Author item={item} items={items} itemsKey={cellKey} />
+      })
+    }
+  </div>
+  </>
+  )
 }
 
 const Author: FC<IAuthor> = ({ item, items, itemsKey }) => {
@@ -31,11 +115,11 @@ const Author: FC<IAuthor> = ({ item, items, itemsKey }) => {
   }
 
   if (items[itemsKey]) {
-    
+    const text = Array.isArray(items[itemsKey]) ? items[itemsKey].join("||") : items[itemsKey]
     return (
       <div className={s.author_container}>
         <div className={s.author_text}>
-          {items[itemsKey]}
+          {text}
         </div>
         <div className={s.score_container}>
           <div className={s.score}>{score}</div>
@@ -54,6 +138,7 @@ const Author: FC<IAuthor> = ({ item, items, itemsKey }) => {
 
 export const TranslatePage = () => {
   const id = window.location.search.slice(1).split("=")[1];
+  const ELEMENT_COUNT = 10;
   const dispatch = useAppDispatch();
   const { file } = useAppSelector(
     state => state.file
@@ -83,46 +168,18 @@ export const TranslatePage = () => {
   const translate: any[] = serialized.split();
 
   const [selectedPage, setSelectedPage] = useState(0);
-  const page: number = Math.ceil(translate.length / 10);
+  const page: number = Math.ceil(translate.length / ELEMENT_COUNT);
   const pages: number[] = Array.from({length: page}, (v, i) => i);
   
-  const sliced = translate.slice(0 + (selectedPage * 10), 10 + (selectedPage * 10));
+  const sliced = translate.slice(0 + (selectedPage * ELEMENT_COUNT), ELEMENT_COUNT + (selectedPage * ELEMENT_COUNT));
   const objCounts = sliced.map(item => Object.keys(item).length);
-	const buttonSeesArr:string[][] = objCounts.map(count => new Array(count).fill("see"));
-  const scoresArr:number[][][] = objCounts.map(count => new Array(count).fill("see"))
+
 	const isHidesArr:boolean[][] = objCounts.map(count => new Array(count).fill(true));
 
-	const [buttonSees, setButtonSees] = useState<string[][]>([]);
 	const [isHides, setIsHides] = useState<boolean[][]>([]);
-  const [scores, setScores] = useState<number[][][]>(scoresArr)
   const [refresh, setRefersh] = useState(false)
 
-  // setScores((it) => {
-
-  //    const items = translate.slice(0 + (selectedPage * 10), 10 + (selectedPage * 10)).map((item: Slice) => item)
-  //     return author?.map((item: any, authIndex: number) => {
-  //       if(typeof it[index] === "undefined") {
-  //         return []
-  //       }
-  //       return  author[author.id]
-  //     })
-       
-
-  // })
-
-	useEffect(() => {
-    if (buttonSees.length === 0) {
-      setButtonSees(buttonSeesArr);
-    }
-
-    if (isHides.length === 0) {
-      setIsHides(isHidesArr)
-    }
-    getAuthor()
-    getFile()
-    
-	}, [file.request, refresh, scores])
-
+  
   function downloadOnClick() {
     serialized.export("score");
 
@@ -136,7 +193,7 @@ export const TranslatePage = () => {
 
     setRefersh( item => !item);
   }
-
+  
   function saveOnClick() {
     const json = serialized.json();
     const data = {
@@ -150,14 +207,15 @@ export const TranslatePage = () => {
     })
   }
 
-  function backOnClick() {
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", `/file?id=${file.data.folder_id}`);
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  }
+  useEffect(() => {
 
+    if (isHides.length === 0) {
+      setIsHides(isHidesArr)
+    }
+    getAuthor()
+    getFile()
+    
+  }, [file.request, refresh])
   return (
 	<>
 		<div className={s.search_button}><button className={s.search}>search</button></div>
@@ -165,7 +223,9 @@ export const TranslatePage = () => {
 			<div className={s.head_text}>
 				{`${file.data.name}.json`}
 			</div>
-			<button onClick={backOnClick} className={s.back_button}>Back</button>
+      <Link to={`/file?id=${file.data.folder_id}`}>
+			  <button className={s.back_button}>Back</button>
+      </Link>
 			</div>
       <div className={s.save_and_download_container}>
       <div className={s.backgraund_element}></div>
@@ -177,7 +237,7 @@ export const TranslatePage = () => {
 		<div className={s.container}>
 		  <div className={s.original}>
 			{
-			  original.slice(0 + (selectedPage * 10), 10 + (selectedPage * 10)).map((item, index: number) => {
+			  original.slice(0 + (selectedPage * ELEMENT_COUNT), ELEMENT_COUNT + (selectedPage * ELEMENT_COUNT)).map((item, index: number) => {
 				const elements = Object.entries(item)
 				.filter(([key, value]) => typeof value !== "function" )
 				.map(([key, value], subIndex: number) => {
@@ -188,13 +248,11 @@ export const TranslatePage = () => {
               <div className={s.element_name}>{key}:</div>
               <textarea rows={3} className={cn(s.element_input, s.element_textarea)} value={val} readOnly={true}></textarea>
             </div>
-            <div style={{height: "300px", display: `${  !isHides[index]?.[subIndex] ? "block" : "none"}`} }>
-              
+            <div className={isHides?.[index]?.[subIndex] ? s.hide : s.empty_div}>
             </div>
 					</>
 				  )
 				})
-
 				return (
 				  <div className={s.original_container}>
 					{
@@ -208,169 +266,11 @@ export const TranslatePage = () => {
 		  
 		  <div className={s.translate}>
 			{
-			  translate.slice(0 + (selectedPage * 10), 10 + (selectedPage * 10)).map((item: Slice, index: number) => {
-				const id = Math.random().toString()
-        // setScores((it)a => {
-        //   console.log(item)
-        //   item.author?.map((author, authIndex) => {
-        //     if(typeof it[index] === "undefined") {
-        //       it[index] = []
-        //     }
-        //     it[index][authIndex] = author[author.id]
-        //   })
-        //   return it
-
-        // })
-			  
+			  translate.slice(0 + (selectedPage * ELEMENT_COUNT), ELEMENT_COUNT + (selectedPage * ELEMENT_COUNT)).map((item: Slice, index: number) => {
 				const elements = Object.entries(item)
 				.filter(([key, value]) =>  typeof value !== "function" )
 				.map(([key, value], subIndex) => {
-          if(key === "author" && Array.isArray(value)) {
-            return value.find((elm)=>{
-              
-              if(elm.__isAuthorElement === "__isAuthorElement") return null
-            })
-          }
-          const onClickInputButton = () => {
-            setIsHides(prevIsHides => {
-                return prevIsHides.map((itemH, indexH) => {
-                  if(indexH === index) {
-                    return itemH.map((subItemH, subIndexH) => {
-                      if (subIndex === subIndexH) {
-                        return subItemH = !subItemH 
-                      } else {
-                        return subItemH
-                      }
-                    })
-                  } else {
-                    return itemH
-                  }
-                })
-                
-              })
-            setButtonSees((prev) => {
-              return prev.map((itemB, indexB) =>{
-                if(indexB == index) {
-                  return itemB.map((subItemB, subIndexB) => {
-                    if(subIndex === subIndexB) {
-                      return subItemB === "see" ? "back" : "see";
-                    } else {
-                      return subItemB
-                    }
-                  })
-                } else {
-                  return itemB
-                }
-              })
-            });
-          };  
-          let inputValue: any = "";
-          function onInputChange(event: any) {
-            
-            if ( author  === "Unauthorized") {
-              return null
-            }
-            const data = event.target.value.includes("||") ? event.target.value.split("||") : event.target.value
-            const key = event.target.name
-            
-            if (typeof item.author === "undefined") {
-              console.log(item.author)
-              item.setAuthor(author.id, author.username, data, key, 0)
-            } else if (!item.author.find((value: any) => {
-              return value.name === author.username
-            })) {
-
-              item.setAuthor(author.id, author.username, data, key, 0)
-            } else {
-
-              item.setDataByAuthorId(author.id, data, key)
-            }
-            inputValue = data
-          }
-          
-				  return(<>
-					<div key={`${key}_${Math.random()}`} id={id} className={s.translate_elements}>
-					  <textarea rows={3} name={key} onChange={onInputChange} id={id} className={s.element_input}></textarea>
-					  <Button onClick={onClickInputButton}>{buttonSees[index]?.[subIndex]}</Button>
-					</div>
-          
-					<div className={isHides[index]?.[subIndex] ? s.hide : s.authors}>
-					  <div className={s.authors_title}>Version of translation:</div>
-					  {
-						  item.author?.map((items: any, authIndex) => {
-                return <Author item={item} items={items} itemsKey={key} />
-                // function plus() {
-                //   console.log(refresh, "items")
-                //   let result = item.setScoreByAuthorId(items.id, "+")
-                //   setScores(scores => scores.map((score, i) => {
-                //     if (i === index) {
-                //       return score.map((scor, j) => {
-                //         if (j === subIndex) {
-                //           return scor.map((s, t) => {
-                //             if(t === authIndex){
-                //               return s + 1
-                //             } else {
-                //               return s
-                //             }
-                //           })
-                //         } else {
-                //           return scor;
-                //         }
-                //       });
-                //     } else {
-                //       return score;
-                //     }
-                //   }));
-                // }
-                // function minus() {
-                //   console.log(refresh, "items")
-                //   item.setScoreByAuthorId(items.id, "-")
-                //   setScores(scores => scores.map((score, i) => {
-                //     if (i === index) {
-                //       return score.map((scor, j) => {
-                //         if (j === subIndex) {
-                //           return scor.map((s, t) => {
-                //             if(t === authIndex){
-                //               return s - 1
-                //             } else {
-                //               return s
-                //             }
-                //           })
-                //         } else {
-                //           return scor;
-                //         }
-                //       });
-                //     } else {
-                //       return score;
-                //     }
-                //   }));
-                // }
-
-                // if (items[key]) {
-                  
-                //   return (
-                //     <div className={s.author_container}>
-                //       <div className={s.author_text}>
-                //         {items[key]}
-                //       </div>
-                //       <div className={s.score_container}>
-                //         <div className={s.score}>{scores[index]?.[subIndex]?.[authIndex] ?? items[items.id]}</div>
-                //         <button onClick={plus} className={s.plus}>+</button>
-                //         <button  onClick={minus} className={s.minus}>-</button>
-                //       </div>
-                //       <div className={s.author_name}>
-                //         {items.name}
-                //       </div>
-                //     </div>
-                //   )
-                // } else {
-                //   return null
-                // }
-						  })
-						}
-					</div>
-					</>
-				  )
+          return <Cell value={value} setIsHides={setIsHides} index={index} subIndex={subIndex} cellKey={key} isHides={isHides} author={author} item={item} />
 				})
 				return(
 				  <div className={s.translate_container}>
@@ -384,7 +284,7 @@ export const TranslatePage = () => {
 		  </div>
 		</div>
 		<div className={s.pagination}>
-		  <Pagination page={selectedPage} pages={pages} setSelectedPage={setSelectedPage} />
+		  <Pagination page={selectedPage} pages={pages} setSelectedPage={setSelectedPage} elementCount={ELEMENT_COUNT}/>
 		</div>
 	</>
   )
