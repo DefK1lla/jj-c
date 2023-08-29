@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import { auth, signup, putPassword } from '../shared/api/routs/user';
@@ -14,7 +14,7 @@ interface MyForm {
 
 
 export const Authentification = () => {
-
+  const [popup, setPopup] = useState<string>("")
   const {register, handleSubmit} = useForm<MyForm>({
     defaultValues: {}
   })
@@ -23,13 +23,15 @@ export const Authentification = () => {
     if (window.location.href.includes(path.REGISTRATION_ROUTE)) {
       signup(data)
       .then((data)=>{
-        console.log(data)
-      })
-      .finally(() => {
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", "/");
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
+        if (data.statusText !== "Unauthorized") {
+          const downloadAnchorNode = document.createElement('a');
+          downloadAnchorNode.setAttribute("href", "/");
+          downloadAnchorNode.click();
+          downloadAnchorNode.remove();
+        } 
+        if (typeof data.data == "undefined") {
+          alert("That login is already taken.")
+        }
       })
     }
 
@@ -59,6 +61,7 @@ export const Authentification = () => {
           <input id="password" className={s.password} type='password' {...register('password', { required: true})}/>
           <button>Отправить</button>
         </form>
+        <div className="Container" dangerouslySetInnerHTML={{__html: popup}}></div>
       </div>
     )
   } else if (window.location.href.includes(path.AUTH_ROUTE)) {
@@ -72,6 +75,7 @@ export const Authentification = () => {
           <input id="password" className={s.password} type='password' {...register('password', { required: true})}/>
           <button>Отправить</button>
         </form>
+        <div className="Container" dangerouslySetInnerHTML={{__html: popup}}></div>
       </div>
     )
   } else {

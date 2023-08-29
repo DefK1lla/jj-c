@@ -11,6 +11,7 @@ import { newFolderRequest } from '../../store/slice/folderSlice';
 
 import s from "./filePage.module.scss";
 import { Link } from 'react-router-dom';
+import { path } from '../../shared/constants/paths';
 
 export const FilePage = () => {
   const dispatch = useAppDispatch();
@@ -37,11 +38,15 @@ export const FilePage = () => {
 
 
   function folderDone() {
-    if(!folder.data.id) {
+    if(!folder?.data?.id) {
       return null
     } else {
-       return <GameCard  title={folder.data.name!} img={folder.data.img!} isBig={true}/>
-    }
+        return (
+          <Link className={s.card_rout} to={`${path.FOLDER_ROUTE}?id=${folder.data.game_id}`} >
+            <GameCard  title={folder.data.name!} img={folder.data.img!} isBig={true}/>
+          </Link>
+        )
+      }
   }
   useEffect(() => {
 
@@ -59,7 +64,6 @@ export const FilePage = () => {
         <div className={s.files}>
           {
             files.data.map((item) => {
-              console.log(item)
               if (!item.folder_id) {
                 return <div className={s.title}>Loading...</div>
               } else {

@@ -20,7 +20,8 @@ export const endpoints_file = {
   set_file: '/file/set',
   set_translate: '/file/translate',
   delete_file: '/file/delete',
-  update_file: '/file/update'
+  update_file: '/file/update',
+  get_newfile: '/file/news'
 }
 
 export const endpoints_user = {

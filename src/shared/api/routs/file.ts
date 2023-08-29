@@ -4,7 +4,9 @@ import {
     ISetFile,
     IDeleteFile,
     IUpdateFile,
-    ISetTranslate
+    ISetTranslate,
+    INewFile,
+    IGetNewFiles
 } from '../../types/file'
 
 import { api, endpoints_file} from '../index'
@@ -44,4 +46,10 @@ export const fileUpdate = (
     updateFileForm: IUpdateFile
 ): AxiosPromise<IFile> => {
     return api.post(endpoints_file.update_file, updateFileForm)
+}
+
+export const getNewFiles = (
+    getFilesForm: IGetNewFiles
+): AxiosPromise<INewFile[]> => {
+    return api.post(endpoints_file.get_newfile, getFilesForm)
 }

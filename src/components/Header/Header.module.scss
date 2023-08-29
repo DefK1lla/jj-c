@@ -2,7 +2,7 @@
 
 .container {
   background-color: $color-light-blue;
-  width: 100%;
+  width: 50%;
   height: 100%;
   color: $color-white;
   padding-top: 31px;
@@ -19,4 +19,29 @@
 .description {
   font-size: 36px;
   font-family: $font-Montserrat;
+}
+
+.main_container {
+  display: flex;
+  background-color: $color-light-blue;
+  flex-wrap: nowrap;
+  align-items: center;
+
+  @media screen and (min-width: 1300px) {
+    width: 50%;
+  }
+  @media screen and (max-width: 1300px) {
+    width: 100%;
+  }
+}
+
+.routs {
+  width: 500px;
+  display: flex;
+  justify-content: space-around;
+}
+
+a {
+  text-decoration: none;
+  color: $color-white;
 }

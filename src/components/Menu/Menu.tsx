@@ -5,15 +5,15 @@ import { GameFileName } from "../GameFileName/GameFileName";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
 import { percents } from "../../shared/mockfolder/mock_percents"; //.
-import { useAppDispatch, useAppSelector } from "../../shared/hooks/redux";
 import { gameSet } from "../../shared/api/routs/game";
 import { folderSet } from "../../shared/api/routs/folder";
-import { fileSet } from "../../shared/api/routs/file";
+import { fileSet, getNewFiles } from "../../shared/api/routs/file";
 import { getUser } from '../../shared/api/routs/user';
 import { IAuth } from "../../shared/types/user";
 import { path } from "../../shared/constants/paths";
 
 import s from "./menu.module.scss";
+import { INewFile } from "../../shared/types/file";
 
 
 interface Menu {
@@ -28,23 +28,24 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     } else {
         label = "img"
     }
+
     const id = window.location.search.slice(1).split("=")[1];
     const [author, setAuthor] = useState<IAuth | any>();
     const [isVisible, setIsVisible] = useState(false)
     const [message, setMessage] = useState<string | undefined>(undefined);
-    function onClickButton() {
-        if (author?.id === undefined) {
-            alert("Unauthorized")
-            setTimeout(() => {
-                window.location.href = path.REGISTRATION_ROUTE
-            }, 500)
-            return null
-        }
-         setIsVisible(!isVisible);
-    }
+    const [newFiles, setNewFiles] = useState<INewFile[]>()
+
     async function getAuthor() {
-        setAuthor((await getUser()).data)
+        getUser()
+        .then((item) => {
+            setAuthor(item.data)
+            getNewFiles({ id: item.data.id! })
+            .then((files) => {
+                setNewFiles(files.data)
+            })
+        })
     }
+    
     function formElements() {
         return (
             <>
@@ -55,6 +56,7 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
                 {
                     buttonType === "UPLOAD .JSON" ? (
                         <div className={s.popup_radio}>
+                            <div className={s.recent_json_title}>Select a language</div>
                             <input type={'radio'} id="lah" name={"radio"} value={"lah"} required />
                             <label htmlFor="lah">Latvian</label>
                             <br/>
@@ -75,6 +77,17 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
                 <input className={s.popup_submit} type={"submit"} value={"SAVE"}/>
             </>
         )
+    }
+
+    function onClickButton() {
+        if (author?.id === undefined) {
+            alert("Unauthorized")
+            setTimeout(() => {
+                window.location.href = path.REGISTRATION_ROUTE
+            }, 500)
+            return null
+        }
+         setIsVisible(!isVisible);
     }
 
     function setGame(event: any, subEvent: ProgressEvent<FileReader>) {
@@ -121,7 +134,8 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
                 name: event.target.name.value,
                 local: event.target.radio.value,
                 data: reader.result,
-                folder_id: id
+                folder_id: id,
+                author_id: author.id
             }
 
             fileSet(json)
@@ -165,6 +179,7 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     
     
     useEffect(() => {
+
         getAuthor()
 
     }, [message])
@@ -178,7 +193,7 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
             }) : null}
             </div>
             <div className={s.recent_json_title}>Recent jsons</div>
-            <GameFileName />
+            <GameFileName newFiles={newFiles}/>
             <div className={s.button}>
                 <Button onClick={onClickButton}>{buttonType}</Button>
                 <div className={isVisible ? s.popup: s.hide}>

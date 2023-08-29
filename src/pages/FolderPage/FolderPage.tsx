@@ -7,9 +7,10 @@ import { foldersGet } from '../../shared/api/routs/folder';
 import { gameGet } from '../../shared/api/routs/game';
 import { newFoldersRequest } from "../../store/slice/folderSlice";
 import { newGameRequest } from '../../store/slice/gameSlice';
+import { Link } from 'react-router-dom';
+import { path } from '../../shared/constants/paths';
 
 import s from "./folderPage.module.scss";
-import { Link } from 'react-router-dom';
 
 export const FolderPage = () => {
   const dispatch = useAppDispatch();
@@ -39,7 +40,11 @@ export const FolderPage = () => {
     if (!game.data.id) {
       return null
     } else {
-      return <GameCard  title={game.data.name!} img={game.data.img!} isBig={true} />
+      return (
+        <Link className={s.rout_game} to={`${path.HOME_ROUTE}`}>
+          <GameCard  title={game.data.name!} img={game.data.img!} isBig={true} />
+        </Link>
+      )
     }
   }
   useEffect(() => {

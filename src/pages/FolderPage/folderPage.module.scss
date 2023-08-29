@@ -5,26 +5,27 @@
     @media screen and (max-width: 1244px) {
     flex-direction: column-reverse;
     align-items: center;
+   
     }
 }
 
 .container {
     background-color: $color-light-blue;
+    width: 50%;
+    // @media screen and (min-width: 1680px) {
+    //     min-height: calc(100vh - 160px); 
+    //     min-width: calc(100vw - 900px);
+    // }
 
-    @media screen and (min-width: 1680px) {
-        min-height: calc(100vh - 160px); 
-        min-width: calc(100vw - 900px);
-    }
-
-    @media screen and (max-width: 1680px) {
-        min-height: calc(100vh - 160px); 
-        min-width: calc(100vw - 600px);
-    }
+    // @media screen and (max-width: 1680px) {
+    //     min-height: calc(100vh - 160px); 
+    //     min-width: calc(100vw - 600px);
+    // }
 
     @media screen and (max-width: 1444px) {
         padding-top: 25px;
         padding-left: none;
-        width: 100%;
+
     }
 
 }
@@ -99,4 +100,10 @@
     font-size: 48px;
     font-weight: 500;
     margin: 0 auto;
+}
+
+.rout_game {
+    display: contents;
+    text-decoration: none;
+    color: initial;
 }

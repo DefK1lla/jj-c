@@ -10,22 +10,17 @@
 
 .container {
     background-color: $color-light-blue;
+    min-height: calc(100vh - 160px); 
 
-    @media screen and (min-width: 1680px) {
-        min-height: calc(100vh - 160px); 
-        min-width: calc(100vw - 900px);
+    @media screen and (min-width: 1250px) {
+        width: 50%;
     }
 
-    @media screen and (max-width: 1680px) {
-        min-height: calc(100vh - 160px); 
-        min-width: calc(100vw - 600px);
-    }
 
-    @media screen and (max-width: 1444px) {
+
+    @media screen and (max-width: 1250px) {
         padding-top: 25px;
-        padding-left: none;
-        width: 100%;
-
+        padding-left: none; 
     }
 
 }
@@ -86,5 +81,8 @@
 .route {
     color: inherit; 
     text-decoration: inherit;
+    display: contents;
+}
+a {
     display: contents;
 }
