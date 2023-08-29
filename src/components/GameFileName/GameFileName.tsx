@@ -18,7 +18,6 @@ export const GameFileName: FC<INewFiles> = ({ newFiles }) => {
     return(
         <div className={s.container}>
             {newFiles?.map(item => {
-                console.log(item);
                 const id = Math.random().toString(16).slice(2);
                 return (
                     <Link to={`${path.TRANSLATE_ROUTE}?id=${item.id}`}>

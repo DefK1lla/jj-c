@@ -45,3 +45,11 @@ export interface INewFiles {
 export interface IGetNewFiles {
     id: string
 }
+
+export interface IGetFilesByAuthorId {
+    id: string
+}
+
+export interface IFilesByAuthorId extends INewFile {
+    translate: any
+}

@@ -4,22 +4,28 @@ import { Avatar } from "../Avatar/Avatar";
 import { GameFileName } from "../GameFileName/GameFileName";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
-import { percents } from "../../shared/mockfolder/mock_percents"; //.
 import { gameSet } from "../../shared/api/routs/game";
 import { folderSet } from "../../shared/api/routs/folder";
-import { fileSet, getNewFiles } from "../../shared/api/routs/file";
+import { fileSet, newFilesGet, filesByAuthorIdGet } from "../../shared/api/routs/file";
 import { getUser } from '../../shared/api/routs/user';
 import { IAuth } from "../../shared/types/user";
 import { path } from "../../shared/constants/paths";
+import { IFilesByAuthorId, INewFile } from "../../shared/types/file";
+import { serialize } from "../../shared/helpers/serialize";
 
 import s from "./menu.module.scss";
-import { INewFile } from "../../shared/types/file";
 
 
 interface Menu {
-    buttonType: "CREATE GAME" | "CREATE FOLDER" | "UPLOAD .JSON";
-    haveProgressBarr?: boolean;
+    buttonType: "CREATE GAME" | "CREATE FOLDER" | "UPLOAD .JSON"
+    haveProgressBarr?: boolean
 }
+
+interface IProgress {
+    name: string
+    local: string
+    percent: number
+}   
 
 export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     let label: string;
@@ -34,18 +40,25 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     const [isVisible, setIsVisible] = useState(false)
     const [message, setMessage] = useState<string | undefined>(undefined);
     const [newFiles, setNewFiles] = useState<INewFile[]>()
+    const [progresses, setProgresses] = useState<IProgress[]>([])
 
     async function getAuthor() {
         getUser()
         .then((item) => {
             setAuthor(item.data)
-            getNewFiles({ id: item.data.id! })
+
+            newFilesGet({ id: item.data.id! })
             .then((files) => {
-                setNewFiles(files.data)
+                setNewFiles(files.data);
+            })
+
+            filesByAuthorIdGet({ id: item.data.id! })
+            .then((files) => {
+                setProgresses(makeProgress(files.data as IFilesByAuthorId[]))
             })
         })
     }
-    
+
     function formElements() {
         return (
             <>
@@ -77,6 +90,27 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
                 <input className={s.popup_submit} type={"submit"} value={"SAVE"}/>
             </>
         )
+    }
+
+    function makeProgress(files: IFilesByAuthorId[]) {
+        const filesArr = files.map((file) => {
+            const translate = JSON.parse(file.translate);
+            const slices = serialize(translate).split()
+            const total = slices.length;
+            const done = slices.reduce((accumulator, item, index, array) => {
+                if (Array.isArray(item.author)) {
+                    return ++accumulator
+                } else {
+                    return accumulator
+                }
+            }, 0)
+            return {
+                name: file.name,
+                local: file.local,
+                percent: Math.trunc((done / total) * 100)
+            }
+        })
+        return filesArr
     }
 
     function onClickButton() {
@@ -188,8 +222,9 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
             <Avatar name={author?.username}/>
             {haveProgressBarr ? <div className={s.progress_bar_title}>The Jackbox Party Starter</div> : null }
             <div className={s.progress_bar_container}>
-            {haveProgressBarr ? percents.map(item => {
-               return <ProgressBar percent={item.percent} name={item.name} />
+            {progresses ? progresses.map(item => {
+                console.log(item)
+               return <ProgressBar percent={item.percent} name={item.name} local={item.local}/>
             }) : null}
             </div>
             <div className={s.recent_json_title}>Recent jsons</div>

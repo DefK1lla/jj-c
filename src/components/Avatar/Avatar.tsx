@@ -6,7 +6,6 @@ interface AvatarProps {
 }
 
 export const Avatar: FC<AvatarProps> = ({ name }) => {
-    console.log(name, "avatar")
     return (
         <div className={s.container}>
             <div className={s.userAvatar}>{name ? name.at(0) : "G"}</div>

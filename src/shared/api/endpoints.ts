@@ -21,7 +21,8 @@ export const endpoints_file = {
   set_translate: '/file/translate',
   delete_file: '/file/delete',
   update_file: '/file/update',
-  get_newfile: '/file/news'
+  get_newfile: '/file/news',
+  get_files_by_author_id: '/file/author-id'
 }
 
 export const endpoints_user = {
