@@ -4,7 +4,8 @@ import {
   GamePage,
   FolderPage,
   FilePage,
-  TranslatePage
+  TranslatePage,
+  ResetPassword
 } from "./pages";
 import { path } from "./shared/constants/paths";
 
@@ -18,8 +19,8 @@ export const routes = [
     Component: <AuthPage />
   },
   {
-    path: path.CHANE_PASSPORT_ROUTE,
-    Component: <AuthPage/>
+    path: path.CHANGE_PASSPORT_ROUTE,
+    Component: <ResetPassword/>
   },
   {
     path: path.HOME_ROUTE,

@@ -223,8 +223,8 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
             {haveProgressBarr ? <div className={s.progress_bar_title}>The Jackbox Party Starter</div> : null }
             <div className={s.progress_bar_container}>
             {progresses ? progresses.map(item => {
-                console.log(item)
-               return <ProgressBar percent={item.percent} name={item.name} local={item.local}/>
+                const key = Math.random().toString(16).slice(2);
+               return <ProgressBar key={key} percent={item.percent} name={item.name} local={item.local}/>
             }) : null}
             </div>
             <div className={s.recent_json_title}>Recent jsons</div>

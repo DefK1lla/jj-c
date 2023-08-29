@@ -4,13 +4,12 @@ import { FC } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { HomePage } from './pages'
 import { routes } from './routes'
-import {ProgressBar} from './components/ProgressBar/ProgressBar'
 
 const App: FC = () => {
   return (
     <div className='App'>
-      <Header />
       <BrowserRouter>
+        <Header />
         <Routes>
           <Route index element={<HomePage />} />
           {routes.map(({ path, Component }) => {

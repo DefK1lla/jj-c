@@ -203,7 +203,7 @@ export const TranslatePage = () => {
     translateSet(data)
     
     .finally(() => {
-      window.location.reload();
+      setRefersh(item => !item)
     })
   }
 

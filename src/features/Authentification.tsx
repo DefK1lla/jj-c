@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from "react-hook-form"
+import { useNavigate } from 'react-router';
 
-import { auth, signup, putPassword } from '../shared/api/routs/user';
+import { auth, signup} from '../shared/api/routs/user';
 import { path } from "../shared/constants/paths";
 
 import s from "./authentification.module.scss"
@@ -14,20 +15,20 @@ interface MyForm {
 
 
 export const Authentification = () => {
-  const [popup, setPopup] = useState<string>("")
+  const navigate = useNavigate()
+  const [refresh, setRefersh] = useState(false);
   const {register, handleSubmit} = useForm<MyForm>({
     defaultValues: {}
   })
 
-  const submit: SubmitHandler<MyForm> = async data => {
+  const submit: SubmitHandler<MyForm> = async (data) => {
+    
     if (window.location.href.includes(path.REGISTRATION_ROUTE)) {
       signup(data)
       .then((data)=>{
-        if (data.statusText !== "Unauthorized") {
-          const downloadAnchorNode = document.createElement('a');
-          downloadAnchorNode.setAttribute("href", "/");
-          downloadAnchorNode.click();
-          downloadAnchorNode.remove();
+          if (data.statusText !== "Unauthorized") {
+            setRefersh(item => !item)
+            navigate(path.HOME_ROUTE)
         } 
         if (typeof data.data == "undefined") {
           alert("That login is already taken.")
@@ -39,7 +40,8 @@ export const Authentification = () => {
       auth(data).
       then((data) => {
         if(data.data) {
-          window.location.href = path.HOME_ROUTE
+          setRefersh(item => !item)
+          navigate(path.HOME_ROUTE)
         }
         else {
           alert("Incorrect login or password")
@@ -49,7 +51,9 @@ export const Authentification = () => {
     }
     
   }
-  
+  useEffect(() => {
+
+  }, [refresh])
   if (window.location.href.includes(path.REGISTRATION_ROUTE)){
     return (
       <div className={s.container}>
@@ -57,11 +61,10 @@ export const Authentification = () => {
           <div className={s.signup}>SignUp</div>
           <label htmlFor='login'>Login</label>
           <input id="login" className={s.login} title='login' type='text' {...register('username', { required: true})}/>
-          <label htmlFor='password'>password</label>
+          <label htmlFor='password'>Password</label>
           <input id="password" className={s.password} type='password' {...register('password', { required: true})}/>
-          <button>Отправить</button>
+          <button>Send</button>
         </form>
-        <div className="Container" dangerouslySetInnerHTML={{__html: popup}}></div>
       </div>
     )
   } else if (window.location.href.includes(path.AUTH_ROUTE)) {
@@ -71,11 +74,10 @@ export const Authentification = () => {
           <div className={s.signin}>SignIn</div>
           <label htmlFor='login'>Login</label>
           <input id="login" className={s.login} title='login' type='text' {...register('username', { required: true})}/>
-          <label htmlFor='password'>password</label>
+          <label htmlFor='password'>Password</label>
           <input id="password" className={s.password} type='password' {...register('password', { required: true})}/>
-          <button>Отправить</button>
+          <button>Send</button>
         </form>
-        <div className="Container" dangerouslySetInnerHTML={{__html: popup}}></div>
       </div>
     )
   } else {

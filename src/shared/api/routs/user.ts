@@ -1,4 +1,4 @@
-import { IAuth, ISessionId } from "../../types/user";
+import { IAuth, IResetPassword, ISessionId } from "../../types/user";
 
 import {api, endpoints_user} from "../index";
 import { AxiosPromise } from "axios";
@@ -24,7 +24,7 @@ export const getUser = (): AxiosPromise<IAuth> => {
 }
 
 export const putPassword = (
-    password: string
+    postUserForm: IResetPassword
 ) => {
-    return api.post(endpoints_user.put_password, password)
+    return api.post(endpoints_user.put_password, postUserForm)
 }
