@@ -38,8 +38,8 @@ export const HomePage = () => {
                 return <div className={s.title}>Loading...</div>
               } else {
                 return (
-                  <Link key={item.id} className={s.route} to={`/folder?id=${item.id}`}>
-                    <GameCard key={item.id} img={item.img!} title={item.name!} />
+                  <Link className={s.route} to={`/folder?id=${item.id}`}>
+                    <GameCard img={item.img!} title={item.name!} />
                   </Link>
                   )
               }

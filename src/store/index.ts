@@ -20,6 +20,7 @@ import sessionStorage from 'redux-persist/lib/storage/session'
 import gameSlice from './slice/gameSlice'
 import folderSlice from './slice/folderSlice';
 import fileSlice from './slice/fileSlice';
+import userSlice from './slice/userSlice';
 
 const persistConfig = {
   key: 'root',
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   game: gameSlice,
   folder: folderSlice,
   file: fileSlice,
+  user: userSlice
 })
 
 const _persistedReducer = persistReducer(persistConfig, rootReducer)

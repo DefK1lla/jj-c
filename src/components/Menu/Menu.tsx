@@ -12,6 +12,8 @@ import { IAuth } from "../../shared/types/user";
 import { path } from "../../shared/constants/paths";
 import { IFilesByAuthorId, INewFile } from "../../shared/types/file";
 import { serialize } from "../../shared/helpers/serialize";
+import { setUser } from "../../store/slice/userSlice";
+import { useAppSelector, useAppDispatch } from "../../shared/hooks/redux";
 
 import s from "./menu.module.scss";
 
@@ -34,8 +36,12 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     } else {
         label = "img"
     }
+    const { id , username } = useAppSelector(
+        state => state.user
+    )
+    const dispatch = useAppDispatch()
 
-    const id = window.location.search.slice(1).split("=")[1];
+    const windowId = window.location.search.slice(1).split("=")[1];
     const [author, setAuthor] = useState<IAuth | any>();
     const [isVisible, setIsVisible] = useState(false)
     const [message, setMessage] = useState<string | undefined>(undefined);
@@ -46,6 +52,7 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
         getUser()
         .then((item) => {
             setAuthor(item.data)
+            dispatch(setUser({ id: item.data.id!, username: item.data.username!}))
 
             newFilesGet({ id: item.data.id! })
             .then((files) => {
@@ -148,7 +155,7 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
 
         const json = {
             name: event.target.name.value,
-            game_id: id,
+            game_id: windowId,
             img: base64
         }
 
@@ -168,7 +175,7 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
                 name: event.target.name.value,
                 local: event.target.radio.value,
                 data: reader.result,
-                folder_id: id,
+                folder_id: windowId,
                 author_id: author.id
             }
 

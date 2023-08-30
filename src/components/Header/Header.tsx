@@ -1,47 +1,38 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getUser, logout } from '../../shared/api/routs/user'
 import { path } from '../../shared/constants/paths'
-import { useNavigate } from 'react-router'
+import { useAppDispatch, useAppSelector } from '../../shared/hooks/redux'
+import { setUser } from '../../store/slice/userSlice'
 
 import s from './Header.module.scss'
-import { Link } from 'react-router-dom'
 
 
 const Header = () => {
   //TODO add button display depending on the router
   const islogining = window.location.pathname === path.AUTH_ROUTE || window.location.pathname === path.CHANGE_PASSPORT_ROUTE || window.location.pathname === path.REGISTRATION_ROUTE
-  const navigate = useNavigate()
   const [logined, setLogined] = useState(false);
-
+  
+  const { id, username } = useAppSelector(
+    state => state.user
+  )
+  const dispatch = useAppDispatch()
 
   async function getAuthor() {
-    setLogined((await getUser()).data.id ? true : false)
+    const user = (await getUser()).data
+    dispatch(setUser({ id: user.id!, username: user.username!}))
   }
   
   function onClickLogout(e: any) {
-    e.preventDefault()
     setLogined(item => !item)
     logout()
   }
 
-  function onClickRegistration(e: any) {
-    e.preventDefault()
-    navigate(path.REGISTRATION_ROUTE)
-  }
-
-  function onClickSignin(e: any) {
-    e.preventDefault()
-    navigate(path.AUTH_ROUTE)
-  }
-
-  function onClickRePassword(e: any) {
-    e.preventDefault()
-    navigate(path.CHANGE_PASSPORT_ROUTE)
-  }
 
   useEffect(() => {
     getAuthor()
-  }, [logined])
+
+  }, [logined, islogining, id])
   return (
     <div className={s.main_container} style={{ width: islogining ? "100%" : undefined}}>
       <div className={s.container}>
@@ -52,18 +43,10 @@ const Header = () => {
       </div>
       <div className={ islogining ? s.route : s.routes}>
         <div className={s.log}>
-          {
-            logined ? 
-            <a onClick={onClickLogout} href="#">Logout</a> : 
-            <a onClick={onClickSignin}  href="#">Login</a>
-          }
+          <Link onClick={id ? onClickLogout : undefined} to={path.AUTH_ROUTE}>{id ? "LogOut" : "Login"}</Link>
         </div>
         <div className={s.sig}>
-          {
-            logined ?
-            <a onClick={onClickRePassword} href='#'>Password reset</a> :
-            <a onClick={onClickRegistration} href="#">SignUp</a>
-          }
+          <Link to={id ? path.CHANGE_PASSPORT_ROUTE : path.REGISTRATION_ROUTE}>{id ? "Reset password" : "SigIn"}</Link>
         </div>
       </div>
     </div>
