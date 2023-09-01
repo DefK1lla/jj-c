@@ -1,7 +1,10 @@
+@use 'styles' as *;
+
 .card {
   min-width: 356px;
+
   padding: 3px;
-  background: #ffffff;
+  background: $color-white;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -17,8 +20,11 @@
 }
 
 .big_title { 
-  font-size: "32px"; 
-  line-height: "32px";
+  font-size: 32px; 
+  line-height: 32px;
+  color: $color-black;
+  font-weight: 700;
+
 }
 
 .title {

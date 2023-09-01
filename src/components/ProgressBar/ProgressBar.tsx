@@ -3,12 +3,14 @@ import q from "./progressBar.module.scss"
 
 interface ProgressBarProps {
     percent: number,
-    name: string
+    name: string,
+    local: string,
 }
 
 export const ProgressBar: FC<ProgressBarProps> = ({
     percent,
-    name
+    name,
+    local
 }) => {
     let color: string = "#FFFFFF"
     if (percent < 30) {
@@ -24,7 +26,7 @@ export const ProgressBar: FC<ProgressBarProps> = ({
         <div className={q.container} >
             <div className={q.progress} style={{width: `${percent}%`, backgroundColor: color}}>
                 <div className={q.name}>
-                    {name} -
+                    {name} {local} -
                 </div>
                 <div className={q.percent}>
                 {percent}%

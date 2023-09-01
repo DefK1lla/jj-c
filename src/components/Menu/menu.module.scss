@@ -15,7 +15,7 @@
     display: grid;
     row-gap: 25px;
     max-height: 240px;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .progress_bar_title {
@@ -39,4 +39,78 @@
 .button {
     margin-top: 61px;
     margin-bottom: 25px;
+}
+.hide{
+    display: none;
+}
+
+.popup {
+    background-color: $color-gray;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.popup_container {
+    position: absolute;
+    top: calc(100vh/5);
+    left: calc(100vw/3);
+    background-color: $color-light-blue;
+    width: 640px;
+    padding: 40px;
+    border-radius: 5px;
+}
+
+.close_popup {
+    display: flex;
+    flex-direction: row-reverse;
+    color: $color-black;
+}
+
+.popup_title {
+    color: $color-white;
+}
+
+.popup_label {
+    
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.delete {
+    background-color: $color-red;
+    color: $color-white;
+    margin-left: 10px;
+}
+
+.popup_input {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 560px;
+}
+
+.input {
+    color: $color-white;
+}
+
+.popup_submit {
+    background-color: $color-dark-blue;
+    color: $color-white;
+    font-weight: 500;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.input::-webkit-file-upload-button {
+    background: $color-dark-blue;
+    padding: 5px;
+    font-weight: 500;
+    border-radius: 5px;
+    color: $color-white;
+}
+
+.warn {
+    color: $color-red;
 }

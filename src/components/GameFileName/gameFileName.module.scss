@@ -4,7 +4,7 @@
     display: grid;
     row-gap: 24px;
     max-height: 350px;
-    overflow: scroll;
+    overflow: auto;
 }
 .name {
     font-size: 32px;
@@ -15,4 +15,6 @@
     align-items: center;
     font-weight: 700;
     padding-left: 10px;
+    color: $color-black;
+    width: 100%;
 }

@@ -1,20 +1,53 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
-import { ExamplePage } from '../ExamplePage/ExamplePage';
-import { mockFilesGames, mockFilesUsers } from '../../shared/mockfolder/mock';
+import { useAppDispatch, useAppSelector } from '../../shared/hooks/redux'
 import { GameCard } from '../../components';
-import s from "./homePage.module.scss";
 import { Menu } from '../../components/Menu/Menu';
+import { gamesGet } from '../../shared/api/routs/game';
+import { newGamesRequest } from '../../store/slice/gameSlice';
+
+import s from "./homePage.module.scss";
+import { Link } from 'react-router-dom';
 
 export const HomePage = () => {
-  return (<div className={s.mainContainer}>
-    <div className={s.container}>{
-        mockFilesGames.map((item) => {
-        return <GameCard img={item.url} title={item.name} />
-        })
-      }
-    </div>
-      <Menu />
-    </div>
+  const dispatch = useAppDispatch();
+  const { games } = useAppSelector(
+    state => state.game
+  )
+  const getGames = async () => {
+    try {
+      const data = await gamesGet();
+      
+      dispatch(newGamesRequest({ games: data.data }))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  
+  useEffect(() => {
+    
+      getGames()
+      
+  }, [games.request]); 
+                                                   
+  return (
+      <div className={s.mainContainer}>
+        <div className={s.container}>{
+            games.data.map((item) => {
+              const id = Math.random().toString(16).slice(2);
+              if (!item.id) {
+                return <div key={id} className={s.title}>Loading...</div>
+              } else {
+                return (
+                  <Link key={id} className={s.route} to={`/folder?id=${item.id}`}>
+                    <GameCard img={item.img!} title={item.name!} />
+                  </Link>
+                  )
+              }
+           })
+          }
+        </div>
+        <Menu buttonType={"CREATE GAME"}/>
+      </div>
   )
 }

@@ -2,25 +2,25 @@ import React, { useState, FC } from "react";
 import s from "./pagination.module.scss";
 import cn from 'classnames'
 
-const PAGE_NUMBERS = 10;
+
 
 interface pagination {
     page: number;
     pages: number[];
     setSelectedPage: React.Dispatch<React.SetStateAction<number>>
-
+    elementCount: number
 }
 
-export const Pagination: FC<pagination> = ({page, pages, setSelectedPage}) => {
+export const Pagination: FC<pagination> = ({ page, pages, setSelectedPage, elementCount }) => {
 
   let start = 0;
-  let end = PAGE_NUMBERS;
+  let end = elementCount;
 
   
-  if (page >= Math.ceil(PAGE_NUMBERS / 2)) {
+  if (page >= Math.ceil(elementCount / 2)) {
     
-    start += page - Math.ceil(PAGE_NUMBERS / 2);
-    end += page - Math.ceil(PAGE_NUMBERS / 2);
+    start += page - Math.ceil(elementCount / 2);
+    end += page - Math.ceil(elementCount / 2);
   }
 
   
@@ -42,7 +42,7 @@ export const Pagination: FC<pagination> = ({page, pages, setSelectedPage}) => {
         onClick={() => setSelectedPage((prev: number) => prev - 1)}
         disabled={page === 0} 
       >
-        Назад
+        {"<"}
       </button>
       
       {pageNumbers.map((number) => (
@@ -62,7 +62,7 @@ export const Pagination: FC<pagination> = ({page, pages, setSelectedPage}) => {
         onClick={() => setSelectedPage((prev: number) => prev + 1)}
         disabled={page === pages.length - 1} 
       >
-        Вперед
+        {">"}
       </button>
     </div>
   );
