@@ -34,11 +34,12 @@ export const HomePage = () => {
       <div className={s.mainContainer}>
         <div className={s.container}>{
             games.data.map((item) => {
+              const id = Math.random().toString(16).slice(2);
               if (!item.id) {
-                return <div className={s.title}>Loading...</div>
+                return <div key={id} className={s.title}>Loading...</div>
               } else {
                 return (
-                  <Link className={s.route} to={`/folder?id=${item.id}`}>
+                  <Link key={id} className={s.route} to={`/folder?id=${item.id}`}>
                     <GameCard img={item.img!} title={item.name!} />
                   </Link>
                   )

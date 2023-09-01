@@ -19,17 +19,20 @@
     grid-auto-rows: 180px;
     column-gap: 75px;
     row-gap: 35px;
-    padding-left: 55px;
+    
     justify-content: center;
     @media screen and (min-width: 1244px) {
+        padding-left: 55px;
         min-height: calc(100vh - 160px); 
         grid-template-columns: 355px 355px; 
     }
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 1244px) {
         padding-top: 25px;
         padding-left: none;
         grid-template-columns: 355px;
+        min-height: calc(100vh - 160px);
+        width: 100%;
     }
 
 }

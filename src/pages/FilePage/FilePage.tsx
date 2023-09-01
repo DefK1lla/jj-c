@@ -64,11 +64,12 @@ export const FilePage = () => {
         <div className={s.files}>
           {
             files.data.map((item) => {
+              const id = Math.random().toString(16).slice(2);
               if (!item.folder_id) {
-                return <div className={s.title}>Loading...</div>
+                return <div key={id} className={s.title}>Loading...</div>
               } else {
                 return (
-                  <Link className={s.route} to={`/translate?id=${item.id}`}>
+                  <Link key={id} className={s.route} to={`/translate?id=${item.id}`}>
                     <div className={s.file}>{item.name} {item.local}</div>
                   </Link>
                 )

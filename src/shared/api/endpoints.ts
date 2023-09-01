@@ -30,5 +30,8 @@ export const endpoints_user = {
   logout: "/logout",
   signup: "/signup",
   get_user: "/user",
-  put_password: '/password'
+  put_password: '/password',
+  login_admin: "/admin/login",
+  signup_admin: "/admin/signup",
+  put_password_admin: '/admin/password',
 }

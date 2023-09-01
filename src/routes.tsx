@@ -15,6 +15,14 @@ export const routes = [
     Component: <AuthPage />
   },
   {
+    path: path.ADMIN_REGISTRATION_ROUTE,
+    Component: <AuthPage/>
+  },
+  {
+    path: path.ADMIN_AUTH_ROUTE,
+    Component: <AuthPage/>
+  },
+  {
     path: path.REGISTRATION_ROUTE,
     Component: <AuthPage />
   },

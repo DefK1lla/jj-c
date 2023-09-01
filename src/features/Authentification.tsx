@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from "react-hook-form"
 import { useNavigate } from 'react-router';
 
-import { auth, signup} from '../shared/api/routs/user';
+import { auth, authAdmin, signup, signupAdmin} from '../shared/api/routs/user';
 import { path } from "../shared/constants/paths";
 
 import s from "./authentification.module.scss"
@@ -22,6 +22,29 @@ export const Authentification = () => {
   })
 
   const submit: SubmitHandler<MyForm> = async (data) => {
+    if (window.location.href.includes(path.ADMIN_AUTH_ROUTE)) {
+      authAdmin(data)
+      .then((data) => {
+        if (data.data) {
+          setRefersh(item => !item)
+          navigate(path.HOME_ROUTE)
+        } else {
+          alert("Incorrect login or password")
+        }
+      })
+    } else
+
+    if (window.location.href.includes(path.ADMIN_REGISTRATION_ROUTE)) {
+      signupAdmin(data)
+      .then((data) => {
+        if(data.data) {
+          setRefersh(item => !item)
+          navigate(path.HOME_ROUTE)
+        } else {
+          alert("Error")
+        }
+      })
+    } else
     
     if (window.location.href.includes(path.REGISTRATION_ROUTE)) {
       signup(data)
@@ -34,12 +57,12 @@ export const Authentification = () => {
           alert("That login is already taken.")
         }
       })
-    }
+    } else
 
     if (window.location.href.includes(path.AUTH_ROUTE)) {
       auth(data).
       then((data) => {
-        if(data.data) {
+        if (data.data) {
           setRefersh(item => !item)
           navigate(path.HOME_ROUTE)
         }
@@ -47,6 +70,7 @@ export const Authentification = () => {
           alert("Incorrect login or password")
         }
       })
+
       
     }
     
@@ -68,6 +92,32 @@ export const Authentification = () => {
       </div>
     )
   } else if (window.location.href.includes(path.AUTH_ROUTE)) {
+    return (
+      <div className={s.container}>
+        <form onSubmit={handleSubmit(submit)} className={s.form}>
+          <div className={s.signin}>SignIn</div>
+          <label htmlFor='login'>Login</label>
+          <input id="login" className={s.login} title='login' type='text' {...register('username', { required: true})}/>
+          <label htmlFor='password'>Password</label>
+          <input id="password" className={s.password} type='password' {...register('password', { required: true})}/>
+          <button>Send</button>
+        </form>
+      </div>
+    )
+  } else if (window.location.href.includes(path.ADMIN_REGISTRATION_ROUTE)) {
+    return (
+      <div className={s.container}>
+        <form onSubmit={handleSubmit(submit)} className={s.form}>
+          <div className={s.signin}>SignUp</div>
+          <label htmlFor='login'>Login</label>
+          <input id="login" className={s.login} title='login' type='text' {...register('username', { required: true})}/>
+          <label htmlFor='password'>Password</label>
+          <input id="password" className={s.password} type='password' {...register('password', { required: true})}/>
+          <button>Send</button>
+        </form>
+      </div>
+    )
+  } else if (window.location.href.includes(path.ADMIN_AUTH_ROUTE)) {
     return (
       <div className={s.container}>
         <form onSubmit={handleSubmit(submit)} className={s.form}>

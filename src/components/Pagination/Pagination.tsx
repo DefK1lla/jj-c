@@ -42,7 +42,7 @@ export const Pagination: FC<pagination> = ({ page, pages, setSelectedPage, eleme
         onClick={() => setSelectedPage((prev: number) => prev - 1)}
         disabled={page === 0} 
       >
-        Назад
+        {"<"}
       </button>
       
       {pageNumbers.map((number) => (
@@ -62,7 +62,7 @@ export const Pagination: FC<pagination> = ({ page, pages, setSelectedPage, eleme
         onClick={() => setSelectedPage((prev: number) => prev + 1)}
         disabled={page === pages.length - 1} 
       >
-        Вперед
+        {">"}
       </button>
     </div>
   );

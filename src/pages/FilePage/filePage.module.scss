@@ -21,6 +21,7 @@
     @media screen and (max-width: 1250px) {
         padding-top: 25px;
         padding-left: none; 
+        width: 100%;
     }
 
 }
@@ -34,9 +35,9 @@
     
 
 
-    @media screen and (max-width: 1921px) {
+    @media screen and (max-width: 1721px) {
         grid-auto-rows: 400px;
-        grid-auto-columns: 840px;
+        grid-auto-columns: 700px;
     }
 
     @media screen and (max-width: 1540px) {

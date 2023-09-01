@@ -1,5 +1,4 @@
 import { Button, GameCard, Input } from '../../components'
-import { mockFilesGames } from '../../shared/mockfolder/mock';
 export const ExamplePage = () => {
   return (
     <>
@@ -15,7 +14,7 @@ export const ExamplePage = () => {
       <Button>
         See
       </Button>
-      <GameCard img={mockFilesGames[0].url} title={mockFilesGames[0].name}/>
+      
     </>
   )
 }

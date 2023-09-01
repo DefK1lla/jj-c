@@ -46,9 +46,9 @@
 
 .popup {
     background-color: $color-gray;
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
+    width: 100%;
+    height: 100%;
+    position: fixed;
     top: 0;
     left: 0;
 }
@@ -65,7 +65,7 @@
 .close_popup {
     display: flex;
     flex-direction: row-reverse;
-    color: $color-black
+    color: $color-black;
 }
 
 .popup_title {
@@ -76,6 +76,12 @@
     
     font-weight: 500;
     margin-bottom: 5px;
+}
+
+.delete {
+    background-color: $color-red;
+    color: $color-white;
+    margin-left: 10px;
 }
 
 .popup_input {

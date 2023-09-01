@@ -1,17 +1,18 @@
 import React, { FC, useState, useEffect } from 'react'
+import cn from "classnames"
+import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../../shared/hooks/redux';
 import { serialize, split, Slice} from '../../shared/helpers/serialize';
 import { Button } from '../../components/Button/Button';
 import { Pagination } from '../../components/Pagination/Pagination';
-import { fileGet, translateSet } from '../../shared/api/routs/file';
+import { fileGet, translateSet, fileDelete } from '../../shared/api/routs/file';
 import { getUser } from '../../shared/api/routs/user';
 import { newFileRequest } from '../../store/slice/fileSlice';
-import cn from "classnames"
-
-import s from './translate.module.scss';
 import { IAuth } from '../../shared/types/user';
 import { Link } from 'react-router-dom';
+
+import s from './translate.module.scss';
 
 interface ICell {
   value: any
@@ -28,6 +29,7 @@ interface IAuthor {
   item: Slice
   items: any
   itemsKey: string
+  author: string
 
 }
 
@@ -71,7 +73,6 @@ const Cell: FC<ICell> = ({ value, setIsHides, index, subIndex, cellKey, isHides,
     const key = event.target.name
     
     if (typeof item.author === "undefined") {
-      console.log(item.author)
       item.setAuthor(author.id, author.username, data, key, 0)
     } else if (!item.author.find((value: any) => {
       return value.name === author.username
@@ -95,7 +96,7 @@ const Cell: FC<ICell> = ({ value, setIsHides, index, subIndex, cellKey, isHides,
     <div className={s.authors_title}>Version of translation:</div>
     {
       item.author?.map((items: any) => {
-        return <Author item={item} items={items} itemsKey={cellKey} />
+        return <Author item={item} items={items} itemsKey={cellKey} author={author?.id}/>
       })
     }
   </div>
@@ -103,14 +104,14 @@ const Cell: FC<ICell> = ({ value, setIsHides, index, subIndex, cellKey, isHides,
   )
 }
 
-const Author: FC<IAuthor> = ({ item, items, itemsKey }) => {
+const Author: FC<IAuthor> = ({ item, items, itemsKey, author }) => {
   const [score, setScore] = useState<number | null>(items[itemsKey + "__score__"])
   function plus() {
-    setScore(item.setScoreByAuthorId(items.id, "+", itemsKey))
+    setScore(item.setScoreByAuthorId(items.id, "+", itemsKey, author))
 
   }
   function minus() {
-    setScore(item.setScoreByAuthorId(items.id, "-", itemsKey))
+    setScore(item.setScoreByAuthorId(items.id, "-", itemsKey, author))
     
   }
 
@@ -140,12 +141,13 @@ export const TranslatePage = () => {
   const id = window.location.search.slice(1).split("=")[1];
   const ELEMENT_COUNT = 10;
   const dispatch = useAppDispatch();
+  const navigate = useNavigate()
   const { file } = useAppSelector(
     state => state.file
   )
 
   const [author, setAuthor] = useState<IAuth | any>()
-  
+
   async function getAuthor() {
     setAuthor((await getUser()).data)
   }
@@ -177,11 +179,29 @@ export const TranslatePage = () => {
 	const isHidesArr:boolean[][] = objCounts.map(count => new Array(count).fill(true));
 
 	const [isHides, setIsHides] = useState<boolean[][]>([]);
+  const [isSearchPopupVisible, setIsSearchPopupVisible] = useState(false);
   const [refresh, setRefersh] = useState(false)
-
-  
+  const [isDownloadPopupVisible, setIsDownloadPopupVisible] = useState(false);
+  const [isInputVisible, setIsInputVisible] = useState(false);
   function downloadOnClick() {
-    serialized.export("score");
+    setIsDownloadPopupVisible(!isDownloadPopupVisible);
+  }
+  
+  function handleChange (e: any) {
+    if (e.target.id === "name") {
+      setIsInputVisible(true);
+    } else if (e.target.id === "score") {
+      setIsInputVisible(false)
+    }
+  }
+
+  function downloadPopup(e: any) {
+    e.preventDefault()
+    if (e.target.name === "name") {
+      serialized.export("name", e.target.name[1].value);
+    } else {
+      serialized.export('score');
+    }
 
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(serialized, null, 4));
     const downloadAnchorNode = document.createElement('a');
@@ -194,6 +214,25 @@ export const TranslatePage = () => {
     setRefersh( item => !item);
   }
   
+  function findByKeyValue(array: any[], key?: string, value?: string) {
+    for (let i = 0; i < array.length; i++) {
+      let obj = array[i];
+      if (key) {
+        if (obj[key] == value && obj.hasOwnProperty(key)) {
+          return i
+        }
+      }
+    }
+    for (let i = 0; i < array.length; i++) {
+      let obj = array[i];
+      if (obj.hasOwnProperty(key)) {
+        return i
+      } else {
+        return -1
+      }
+    }
+  }
+
   function saveOnClick() {
     const json = serialized.json();
     const data = {
@@ -207,6 +246,34 @@ export const TranslatePage = () => {
     })
   }
 
+  function searchOnClick() {
+    setIsSearchPopupVisible(!isSearchPopupVisible);
+  }
+  function closePopupOnClick() {
+    setIsSearchPopupVisible(!isSearchPopupVisible);
+  }
+
+  function deleteOnClick() {
+    fileDelete({id: id})
+    navigate('/')
+
+  }
+
+  function onSubmit(e: any) {
+    e.preventDefault();
+    const key = e.target.key.value;
+    const value = e.target.value.value;
+
+    const page = findByKeyValue(original, key, value);
+    if (page !== -1 && typeof page === "number") {
+      setSelectedPage(Math.ceil(page/ELEMENT_COUNT) - 1);
+      setIsSearchPopupVisible(!isSearchPopupVisible)
+    } else {
+      alert("Not found");
+      setIsSearchPopupVisible(!isSearchPopupVisible)
+    }
+  }
+
   useEffect(() => {
 
     if (isHides.length === 0) {
@@ -214,11 +281,35 @@ export const TranslatePage = () => {
     }
     getAuthor()
     getFile()
-    
   }, [file.request, refresh])
   return (
 	<>
-		<div className={s.search_button}><button className={s.search}>search</button></div>
+		<div className={s.search_button}>
+      <button className={s.search} onClick={searchOnClick}>search</button>
+      <div className={isSearchPopupVisible ? s.popup_container : s.hide}>
+    <div className={s.popup}>
+      <div className={s.close_popup}>
+        <button className={s.button_popup} onClick={closePopupOnClick}>
+          X
+        </button>
+      </div>
+      <div className={s.popup_body}>
+        <h2 className={s.popup_title}>Search</h2>
+        <form onSubmit={onSubmit}>
+          <div className={s.input1}>
+          <label className={s.popup_label} htmlFor='key'>Key</label>
+          <input type='text' name="key" id="key" />
+          </div>
+          <div className={s.input2}>
+          <label className={s.popup_label} htmlFor='value'>Value</label>
+          <input type='text' name="value" id='value' />
+          </div>
+          <button>Find</button>
+        </form>
+      </div>
+    </div>
+      </div>
+      </div>
 		<div className={s.head_back}>
 			<div className={s.head_text}>
 				{`${file.data.name}.json`}
@@ -231,7 +322,38 @@ export const TranslatePage = () => {
       <div className={s.backgraund_element}></div>
         <div className={s.save_and_download}>
           <button onClick={saveOnClick} className={s.save}>Save</button>
+          {
+            author?.admin ?
+            <button onClick={deleteOnClick} className={s.delete}>Delete</button> :
+            null
+          }
           <button onClick={downloadOnClick} className={s.download}>Download</button>
+          <div className={isDownloadPopupVisible ? s.download_popup : s.hide}>
+            <div className={s.popup}>
+              <div className={s.close_popup}>
+                <button onClick={downloadOnClick} className={s.button_popup}>
+                  X
+                </button>
+              </div>
+              <h2 className={s.popup_title}>Download json</h2>
+              <form onSubmit={downloadPopup} onChange={handleChange}>
+                <div>
+                  <label htmlFor='score'>By score</label>
+                  <input type={'radio'} id="score" name='radio' required />
+                </div>
+                <div>
+                  <label htmlFor='name'>By name</label>
+                  <input type={'radio'} id="name" name='radio'/>
+                </div>
+                {
+                  isInputVisible ? 
+                  <input type='text' name='name'></input> : 
+                  null
+                }
+                <button>Download</button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
 		<div className={s.container}>
@@ -242,19 +364,21 @@ export const TranslatePage = () => {
 				.filter(([key, value]) => typeof value !== "function" )
 				.map(([key, value], subIndex: number) => {
           const val = Array.isArray(item[key]) ? item[key].join("||") : item[key]
+          const htmlId = Math.random().toString(16).slice(2)
           return ( 
-          <>
-            <div key={`${item.__id}_${key}_${index}`} className={s.element_container} >
+          <div key={htmlId}>
+            <div className={s.element_container} >
               <div className={s.element_name}>{key}:</div>
               <textarea rows={3} className={cn(s.element_input, s.element_textarea)} value={val} readOnly={true}></textarea>
             </div>
             <div className={isHides?.[index]?.[subIndex] ? s.hide : s.empty_div}>
             </div>
-					</>
+					</div>
 				  )
 				})
+        const htmlId = Math.random().toString(16).slice(2)
 				return (
-				  <div className={s.original_container}>
+				  <div key={htmlId} className={s.original_container}>
 					{
 					  elements.map((item: any) => item)
 					}
@@ -270,10 +394,13 @@ export const TranslatePage = () => {
 				const elements = Object.entries(item)
 				.filter(([key, value]) =>  typeof value !== "function" )
 				.map(([key, value], subIndex) => {
+          const htmlId = Math.random().toString(16).slice(2)
           return <Cell value={value} setIsHides={setIsHides} index={index} subIndex={subIndex} cellKey={key} isHides={isHides} author={author} item={item} />
 				})
+        const htmlId = Math.random().toString(16).slice(2)
 				return(
-				  <div className={s.translate_container}>
+          
+				  <div key={htmlId} className={s.translate_container}>
 					  {
 						elements.map((item: any) => item)
 					  }

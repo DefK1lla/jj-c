@@ -11,21 +11,14 @@
 
 .container {
     background-color: $color-light-blue;
-    width: 50%;
-    // @media screen and (min-width: 1680px) {
-    //     min-height: calc(100vh - 160px); 
-    //     min-width: calc(100vw - 900px);
-    // }
-
-    // @media screen and (max-width: 1680px) {
-    //     min-height: calc(100vh - 160px); 
-    //     min-width: calc(100vw - 600px);
-    // }
+    @media screen and (min-width: 1444px) {
+        width: 50%;
+    }
 
     @media screen and (max-width: 1444px) {
         padding-top: 25px;
         padding-left: none;
-
+        width: 100%;
     }
 
 }

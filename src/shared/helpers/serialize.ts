@@ -11,7 +11,7 @@ type Serialize = {
 export type Slice = {
 	setAuthor: (id: string, name: string, data: any, key: string, score: number) => void;
 	deleteAuthor: (id: string) => null | void;
-	setScoreByAuthorId: (id: string, value: "+" | "-", itemKey: string) => null | number;
+	setScoreByAuthorId: (id: string, value: "+" | "-", itemKey: string, author: string) => null | number;
 	setDataByAuthorId: (id: string, data: any, key: string) => null | void;
 	getDataId: () => string;
 	author: any[];
@@ -50,7 +50,7 @@ function serialize(datas: any): Serialize {
 										obj.author = [];
 									}
 									
-									obj.author.push({ id: id, name: name, [key + "__score__"]: score, [key]: data, __isAuthorElement: "__isAuthorElement" });
+									obj.author.push({ id: id, name: name, [key + "__score__"]: 0, [key]: data, score_plus: [], score_minus: []  , __isAuthorElement: "__isAuthorElement" });
 								},
 								enumerable: true
 							},
@@ -72,7 +72,7 @@ function serialize(datas: any): Serialize {
 							},
 
 							setScoreByAuthorId: {	
-								value: function(id: string, value: "+" | "-", itemKey: string) {
+								value: function(id: string, value: "+" | "-", itemKey: string, author_id: string) {
 									if(!Array.isArray(this.author)) {
 										return null;
 									}
@@ -80,10 +80,31 @@ function serialize(datas: any): Serialize {
 									obj.author.forEach(function(item: any, index: number, array: any) {
 										if (item.id === id) {
 											if(value === "+") {
-												array[index][itemKey + "__score__"]++;
+												if (!item.score_plus.includes(author_id)) {
+													item.score_plus.push(author_id);
+													const index = item.score_minus.indexOf(author_id)
+													if (index !== -1) {
+														item.score_minus.splice(index, 1);
+													}
+													
+													item[itemKey + "__score__"]++;
+												} else if (item[itemKey + "__score__"] === 0) {
+													item[itemKey + "__score__"]++;
+												}
+
 											} 
 											if (value === "-") {
-												array[index][itemKey + "__score__"]--;
+												if (!item.score_minus.includes(author_id)) {
+													item.score_minus.push(author_id);
+													const index = item.score_plus.indexOf(author_id)
+
+													if (index !== -1) {
+														item.score_plus.splice(index, 1)
+													}
+													item[itemKey + "__score__"]--;
+												} else if (item[itemKey + "__score__"] === 0) {
+													item[itemKey + "__score__"]--;
+												}
 											}
 											score = array[index][itemKey + "__score__"]
 										}								
@@ -157,7 +178,15 @@ function serialize(datas: any): Serialize {
 											})
 
 											const temp = obj.author[i].data;
-
+											const keys = Object.keys(temp);
+											keys.forEach((item) => {
+												for(let i in obj){
+													if (item == i && typeof obj[item] !== "function" ) {
+														obj[item] = temp[item]
+													}
+												}
+											})
+											delete obj.author;
 										}
 									}
 								},
@@ -189,7 +218,7 @@ function serialize(datas: any): Serialize {
 			value: function(method: "score" | "name", name?: string) {
 				
 				exportst.forEach((item:Function) => {
-					item(method);
+					item(method, name);
 				})
 			},
 			enumerable: true,

@@ -63,11 +63,12 @@ export const FolderPage = () => {
         </div>
         <div className={s.child_cards}>
             {folders.data.map(item => {
+              const id = Math.random().toString(16).slice(2);
               if (!item.id) {
-                return <div className={s.title}>Loading...</div>
+                return <div key={id} className={s.title}>Loading...</div>
               } else {
                 return (
-                  <Link className={s.route} to={`/file?id=${item.id}`}>
+                  <Link key={id} className={s.route} to={`/file?id=${item.id}`}>
                     <GameCard title={item.name!} img={item.img!} />
                   </Link>
                 )

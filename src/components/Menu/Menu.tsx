@@ -1,11 +1,12 @@
 import { FC, useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 
 import { Avatar } from "../Avatar/Avatar";
 import { GameFileName } from "../GameFileName/GameFileName";
 import { Button } from "../Button/Button";
 import { ProgressBar } from "../../components/ProgressBar/ProgressBar";
-import { gameSet } from "../../shared/api/routs/game";
-import { folderSet } from "../../shared/api/routs/folder";
+import { gameSet, gameDelete} from "../../shared/api/routs/game";
+import { folderSet, folderDelete } from "../../shared/api/routs/folder";
 import { fileSet, newFilesGet, filesByAuthorIdGet } from "../../shared/api/routs/file";
 import { getUser } from '../../shared/api/routs/user';
 import { IAuth } from "../../shared/types/user";
@@ -36,10 +37,12 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     } else {
         label = "img"
     }
-    const { id , username } = useAppSelector(
+    const { id , username, admin } = useAppSelector(
         state => state.user
     )
+
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
     const windowId = window.location.search.slice(1).split("=")[1];
     const [author, setAuthor] = useState<IAuth | any>();
@@ -47,13 +50,13 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     const [message, setMessage] = useState<string | undefined>(undefined);
     const [newFiles, setNewFiles] = useState<INewFile[]>()
     const [progresses, setProgresses] = useState<IProgress[]>([])
+    const [isDeleteVisible, setIsDeleteVisible] = useState<boolean>(false)
 
     async function getAuthor() {
         getUser()
         .then((item) => {
             setAuthor(item.data)
-            dispatch(setUser({ id: item.data.id!, username: item.data.username!}))
-
+            dispatch(setUser({ id: item.data.id!, username: item.data.username!, admin: item.data.admin!}))
             newFilesGet({ id: item.data.id! })
             .then((files) => {
                 setNewFiles(files.data);
@@ -192,6 +195,20 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
         }
     }
 
+    function deleteOnClick() {
+        if (window.location.href.includes(path.FOLDER_ROUTE)) {
+            gameDelete({id: windowId})
+            navigate(`/`)
+        } else 
+        if (window.location.href.includes(path.FILE_ROUTE)) {
+            folderDelete({id: windowId})
+            
+            navigate(`/`)
+        } else {
+
+        }
+    }
+
     function onSubmit(event: any) {
         event.preventDefault();
         
@@ -220,9 +237,17 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
     
     
     useEffect(() => {
-
         getAuthor()
-
+        if(admin) {
+            if (window.location.pathname === path.HOME_ROUTE ||
+                window.location.href.includes(path.GAME_ROUTE)) {
+                setIsDeleteVisible(false);
+            } else {
+                setIsDeleteVisible(true);
+            }
+        } else {
+            setIsDeleteVisible(false);
+        }
     }, [message])
     return(
         <div className={s.menu}>
@@ -238,6 +263,9 @@ export const Menu: FC<Menu> = ({ buttonType, haveProgressBarr }) => {
             <GameFileName newFiles={newFiles}/>
             <div className={s.button}>
                 <Button onClick={onClickButton}>{buttonType}</Button>
+                {
+                    isDeleteVisible ? <button onClick={deleteOnClick} className={s.delete}>Delete</button> : null
+                }
                 <div className={isVisible ? s.popup: s.hide}>
                     <div className={s.popup_container}>
                         <div className={s.close_popup}>

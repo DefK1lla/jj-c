@@ -28,3 +28,21 @@ export const putPassword = (
 ) => {
     return api.post(endpoints_user.put_password, postUserForm)
 }
+
+export const authAdmin = (
+    postUserForm: IAuth
+) => {
+    return api.post(endpoints_user.login_admin, postUserForm)
+}
+
+export const signupAdmin = (
+    postUserForm: IAuth
+) => {
+    return api.post(endpoints_user.signup_admin, postUserForm)
+}
+
+export const putPasswordAdmin = (
+    postUserForm: IResetPassword
+) => {
+    return api.post(endpoints_user.login_admin, postUserForm)
+}

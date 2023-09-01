@@ -10,7 +10,12 @@ import s from './Header.module.scss'
 
 const Header = () => {
   //TODO add button display depending on the router
-  const islogining = window.location.pathname === path.AUTH_ROUTE || window.location.pathname === path.CHANGE_PASSPORT_ROUTE || window.location.pathname === path.REGISTRATION_ROUTE
+  const islogining = window.location.pathname === path.AUTH_ROUTE 
+  || window.location.pathname === path.CHANGE_PASSPORT_ROUTE 
+  || window.location.pathname === path.REGISTRATION_ROUTE 
+  || window.location.pathname === path.ADMIN_AUTH_ROUTE
+  || window.location.pathname === path.ADMIN_REGISTRATION_ROUTE
+  
   const [logined, setLogined] = useState(false);
   
   const { id, username } = useAppSelector(
@@ -20,12 +25,15 @@ const Header = () => {
 
   async function getAuthor() {
     const user = (await getUser()).data
-    dispatch(setUser({ id: user.id!, username: user.username!}))
+    dispatch(setUser({ id: user.id!, username: user.username!, admin: user.admin!}))
   }
   
   function onClickLogout(e: any) {
-    setLogined(item => !item)
-    logout()
+    logout().then(
+      () =>{
+        setLogined(item => !item)
+      }
+    )
   }
 
 

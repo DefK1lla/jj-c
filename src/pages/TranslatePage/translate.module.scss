@@ -1,13 +1,62 @@
 @use 'styles' as *;
 
 .search_button {
-    right: 55%;
+    right: 53%;
     position: absolute;
     top: 60px;
 }
 
 .search {
     background-color: $color-dark-blue;
+}
+
+.popup_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $color-gray;
+    z-index: 11;
+}
+
+.popup {
+    position: absolute;
+    top: calc(100vh/5);
+    left: calc(100vw/3);
+    background-color: $color-light-blue;
+    width: 640px;
+    padding: 40px;
+    border-radius: 5px;
+}
+
+.close_popup {
+    display: flex;
+    flex-direction: row-reverse;
+    color: $color-white;
+}
+
+.input1, .input2 {
+    display: grid;
+}
+
+.popup_title {
+    color: $color-white;
+}
+
+.popup_label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.download_popup {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: $color-gray;
+    z-index: 11;
 }
 
 .head_back {
@@ -99,6 +148,9 @@
     flex-wrap: nowrap;
 }
 
+.delete {
+    background-color: $color-red;
+}
 
 .original_container {
     width: 750px;
